@@ -1,0 +1,415 @@
+/* ============================================================================
+ * Cost Calibration — project dataset
+ * ----------------------------------------------------------------------------
+ * EVERY figure here traces to a retrievable public source (see SOURCES.md and
+ * the `source`/`sourceUrl` on each entry). No number is fabricated. Where only
+ * a defensible RANGE or an AUTHORIZED (not final) budget exists, it is labeled
+ * as such via `basis` and shown honestly on the answer screen. A project whose
+ * cost could not be honestly sourced was excluded (see SOURCES.md "EXCLUDED").
+ *
+ * `cost` = total project cost used for scoring (all-in as reported).
+ * `gsf`  = gross square feet used to compute the *implied* $/SF shown on reveal.
+ * `basis`: "final" | "authorized" | "budget" | "range"
+ * For range projects, a guess anywhere in [costLow, costHigh] scores as exact.
+ * ==========================================================================*/
+
+window.COST_PROJECTS = [
+  {
+    id: "chattanooga-courthouse",
+    name: "New U.S. Courthouse",
+    category: "federal",
+    type: "Federal courthouse",
+    city: "Chattanooga", state: "TN", year: 2021,
+    gsf: 169000, cost: 218381000,
+    basis: "authorized",
+    blurb: "A new U.S. courthouse (~186,000 GSF including 39 inside parking spaces) to replace Chattanooga's existing facility.",
+    source: "GSA FY2021 Prospectus (PTN-CTC-CH21)",
+    sourceUrl: "https://www.gsa.gov/system/files/FY2021%20Chattanooga%20TN%20New%20US%20Courthouse.pdf",
+    note: "GSA-stated Estimated Total Project Cost from the official prospectus."
+  },
+  {
+    id: "parkland-hospital",
+    name: "New Parkland Memorial Hospital",
+    category: "healthcare",
+    type: "Public acute-care hospital (862 beds)",
+    city: "Dallas", state: "TX", year: 2015,
+    gsf: 2100000, cost: 1300000000,
+    basis: "final",
+    blurb: "A 17-story public hospital on a 64-acre campus, replacing the old 730-bed Parkland. Funded by a $747M bond, hospital funds and gifts.",
+    funFact: "Construction hard cost ran about $300/SF; the all-in total was ~$1.3B.",
+    source: "Texas Tribune / Healthcare Design Magazine",
+    sourceUrl: "https://www.texastribune.org/2015/08/31/parkland-opens-13-billion-new-hospital-dallas/"
+  },
+  {
+    id: "stanford-hospital",
+    name: "New Stanford Hospital (500 Pasteur Dr)",
+    category: "healthcare",
+    type: "Acute-care hospital (seismic/OSHPD)",
+    city: "Palo Alto", state: "CA", year: 2019,
+    gsf: 824000, cost: 2000000000,
+    basis: "final",
+    blurb: "A seven-story, 368-private-room hospital by Rafael Viñoly — a Bay-Area OSHPD-rated acute-care facility, among the most expensive building types anywhere.",
+    source: "Palo Alto Online",
+    sourceUrl: "https://www.paloaltoonline.com/news/2019/10/23/new-stanford-hospital-architect-tapped-on-buildings-dna-to-design-2-billion-facility/"
+  },
+  {
+    id: "ucsf-mission-bay",
+    name: "UCSF Medical Center at Mission Bay",
+    category: "healthcare",
+    type: "Hospital complex (children's / women's / cancer)",
+    city: "San Francisco", state: "CA", year: 2015,
+    gsf: 878000, cost: 1520000000,
+    basis: "final",
+    blurb: "A 289-bed, six-story complex housing UCSF's children's, women's and cancer hospitals. LEED Gold, 10+ years of planning and construction.",
+    source: "UCSF (official)",
+    sourceUrl: "https://www.ucsf.edu/news/2014/11/121086/ucsf-medical-center-opens-15-billion-next-generation-hospital-complex-mission"
+  },
+  {
+    id: "aurora-va",
+    name: "Rocky Mountain Regional VA Medical Center",
+    category: "healthcare",
+    type: "VA hospital (federal healthcare)",
+    city: "Aurora", state: "CO", year: 2018,
+    gsf: 1200000, cost: 1730000000,
+    basis: "final",
+    blurb: "A replacement VA medical center that became a landmark cost-overrun story.",
+    funFact: "It was first estimated at $328 million — the contractually obligated cost at opening was $1.73 billion, more than $1B over budget.",
+    source: "NBC News / SOM",
+    sourceUrl: "https://www.nbcnews.com/storyline/va-hospital-scandal/new-colorado-va-hospital-state-art-more-1-billion-over-n898091",
+    note: "Reported area ranges 1.2–1.5M SF; 1.2M used for the implied $/SF."
+  },
+  {
+    id: "newton-north-hs",
+    name: "Newton North High School",
+    category: "education",
+    type: "Public high school",
+    city: "Newton", state: "MA", year: 2010,
+    gsf: 412753, cost: 197500000,
+    basis: "final",
+    blurb: "A replacement high school with two theaters, an Olympic-sized pool, two gyms and vocational shops — the most expensive public school in Massachusetts history at the time.",
+    source: "Governing / CBS Boston / Wikipedia",
+    sourceUrl: "https://www.governing.com/daily-digit/newton-massachusetts-high-school-cost.html"
+  },
+  {
+    id: "harvard-sec",
+    name: "Harvard Science and Engineering Complex (SEC)",
+    category: "life-sciences",
+    type: "University research / lab building",
+    city: "Boston (Allston)", state: "MA", year: 2021,
+    gsf: 544000, cost: 1000000000,
+    basis: "budget",
+    blurb: "A LEED Platinum home for Harvard's engineering and applied sciences — one of the most sustainable lab buildings in the world.",
+    source: "Harvard Magazine",
+    sourceUrl: "https://www.harvardmagazine.com/2016/04/harvard-s-allston-science-and-engineering-complex-approved"
+  },
+  {
+    id: "the-broad",
+    name: "The Broad",
+    category: "cultural",
+    type: "Contemporary art museum",
+    city: "Los Angeles", state: "CA", year: 2015,
+    gsf: 120000, cost: 140000000,
+    basis: "final",
+    blurb: "A Diller Scofidio + Renfro museum with a perforated \"veil and vault\" exterior, privately funded by Eli and Edythe Broad.",
+    source: "ENR (Engineering News-Record)",
+    sourceUrl: "https://www.enr.com/blogs/12-california-views/post/16452-downtown-la-s-140-million-broad-museum-nears-completion"
+  },
+  {
+    id: "sofi-stadium",
+    name: "SoFi Stadium",
+    category: "sports",
+    type: "NFL indoor-outdoor stadium",
+    city: "Inglewood", state: "CA", year: 2020,
+    gsf: 3100000, cost: 5000000000, costLow: 5000000000, costHigh: 5500000000, isRange: true,
+    basis: "range",
+    blurb: "The largest stadium in the NFL, privately financed by Rams ownership under a translucent canopy.",
+    source: "Architectural Record",
+    sourceUrl: "https://www.architecturalrecord.com/articles/16986-stadium-complex-the-true-cost-of-sports-megadevelopments",
+    note: "Reported ~$5.0B for the stadium; figures up to $5.5B include the surrounding Hollywood Park campus — so we show a range, not a single fabricated number."
+  },
+  {
+    id: "comcast-technology-center",
+    name: "Comcast Technology Center",
+    category: "commercial",
+    type: "Office + hotel skyscraper (60 floors, 1,121 ft)",
+    city: "Philadelphia", state: "PA", year: 2018,
+    gsf: 1566000, cost: 1500000000,
+    basis: "final",
+    blurb: "Foster + Partners' supertall — the tallest building in Pennsylvania — combining office, a hotel and broadcast studios.",
+    source: "Wikipedia / gb&d Magazine",
+    sourceUrl: "https://en.wikipedia.org/wiki/Comcast_Technology_Center",
+    note: "~1.566M rentable SF total (1.334M office). Initial announcement $1.2B; completed ~$1.5B."
+  },
+  {
+    id: "nmaahc",
+    name: "Nat'l Museum of African American History & Culture",
+    category: "cultural",
+    type: "Smithsonian museum (federal / cultural)",
+    city: "Washington", state: "DC", year: 2016,
+    gsf: 665000, cost: 540000000,
+    basis: "final",
+    blurb: "A Smithsonian museum on the National Mall, roughly 60% below grade, wrapped in a bronze-colored \"corona.\" Half federally funded.",
+    source: "Smithsonian (official)",
+    sourceUrl: "https://www.si.edu/newsdesk/factsheets/national-museum-african-american-history-and-culture-construction-cool-facts",
+    note: "Total cost includes construction plus exhibition installation."
+  },
+  {
+    id: "penn-medicine-pavilion",
+    name: "The Pavilion (Hospital of the Univ. of Pennsylvania)",
+    category: "healthcare",
+    type: "Acute-care hospital tower (17 floors, 504 beds)",
+    city: "Philadelphia", state: "PA", year: 2021,
+    gsf: 1500000, cost: 1600000000,
+    basis: "final",
+    blurb: "Foster + Partners' \"hospital of the future\" with 504 private rooms and 47 operating rooms — the largest capital project in Penn's history.",
+    source: "Penn Medicine (official)",
+    sourceUrl: "https://www.pennmedicine.org/news/news-releases/2021/october/the-future-of-medicine-is-now-penn-medicine-pavilion-opens-to-patients"
+  },
+  {
+    id: "sf-federal-building",
+    name: "San Francisco Federal Building",
+    category: "federal",
+    type: "Federal office building (18 floors, Morphosis)",
+    city: "San Francisco", state: "CA", year: 2007,
+    gsf: 605000, cost: 144000000,
+    basis: "final",
+    blurb: "A Morphosis-designed GSA tower known for naturally ventilated upper floors and a perforated metal skin.",
+    source: "Architectural Record / GSA fact sheet",
+    sourceUrl: "https://www.architecturalrecord.com/articles/8043-us-federal-building-by-morphosis"
+  },
+  {
+    id: "mit-nano",
+    name: "MIT.nano (Lisa T. Su Building)",
+    category: "life-sciences",
+    type: "University nanotech research lab (cleanrooms)",
+    city: "Cambridge", state: "MA", year: 2018,
+    gsf: 214000, cost: 400000000,
+    basis: "final",
+    blurb: "A LEED Platinum nanoscale-research facility with class-100/1,000 cleanrooms and imaging suites — the largest of its kind in the U.S.",
+    source: "Laser Focus World / MIT Capital Projects",
+    sourceUrl: "https://capitalprojects.mit.edu/projects/lisa-t-su-building",
+    note: "Area reported 200k–238k SF; ~214k used. $350M initial estimate; $400M reported final."
+  },
+  {
+    id: "la-courthouse",
+    name: "U.S. Courthouse (First Street)",
+    category: "federal",
+    type: "Federal courthouse (10 floors, 24 courtrooms)",
+    city: "Los Angeles", state: "CA", year: 2016,
+    gsf: 633000, cost: 350000000,
+    basis: "final",
+    blurb: "An SOM courthouse whose cubic glass volume appears to \"float\" over a stone base — a Project of the Year award winner.",
+    source: "SOM (architect)",
+    sourceUrl: "https://www.som.com/news/inside-downtown-las-350-million-federal-courthouse/"
+  },
+  {
+    id: "northeastern-isec",
+    name: "Interdisciplinary Science & Engineering Complex (ISEC)",
+    category: "life-sciences",
+    type: "University research complex",
+    city: "Boston", state: "MA", year: 2017,
+    gsf: 234000, cost: 225000000,
+    basis: "final",
+    blurb: "A Payette-designed research building at Northeastern for bioengineering, robotics and drug-discovery work; LEED Gold.",
+    source: "Boston Globe / Wikipedia",
+    sourceUrl: "https://www.bostonglobe.com/metro/2017/04/03/northeastern-formally-opens-million-science-engineering-complex/sU5XHLlAzGzicr7AbiWD0I/story.html"
+  },
+  {
+    id: "temple-charles-library",
+    name: "Charles Library, Temple University",
+    category: "education",
+    type: "University library (Snøhetta)",
+    city: "Philadelphia", state: "PA", year: 2019,
+    gsf: 220000, cost: 135000000,
+    basis: "final",
+    blurb: "A Snøhetta library with a soaring timber atrium and one of Pennsylvania's largest green roofs (~47,300 SF).",
+    source: "Dezeen / Architizer",
+    sourceUrl: "https://www.dezeen.com/2019/09/24/temple-universitys-charles-library-snohetta-philadelphia/"
+  },
+  {
+    id: "one-wtc",
+    name: "One World Trade Center",
+    category: "commercial",
+    type: "Office skyscraper (104 floors, 1,776 ft)",
+    city: "New York", state: "NY", year: 2014,
+    gsf: 3500000, cost: 3900000000,
+    basis: "final",
+    blurb: "The tallest building in the Western Hemisphere; hardened security systems pushed it roughly $1B above early estimates.",
+    funFact: "At completion it was reported as the most expensive building in the world.",
+    source: "World Construction Network / Gothamist",
+    sourceUrl: "https://www.worldconstructionnetwork.com/projects/one-world-trade-center/",
+    note: "Reported $3.8–3.9B; 3.5M SF total (2.6M office)."
+  },
+  {
+    id: "salesforce-tower",
+    name: "Salesforce Tower",
+    category: "commercial",
+    type: "Office skyscraper (61 floors, 1,070 ft)",
+    city: "San Francisco", state: "CA", year: 2018,
+    gsf: 1400000, cost: 1100000000,
+    basis: "final",
+    blurb: "The tallest office tower in San Francisco, capped by an electronic art crown visible across the city.",
+    source: "CNN Money / Wikipedia",
+    sourceUrl: "https://money.cnn.com/2018/05/23/technology/salesforce-tower/index.html"
+  },
+  {
+    id: "austin-central-library",
+    name: "Austin Central Library",
+    category: "civic",
+    type: "Public library (6 floors)",
+    city: "Austin", state: "TX", year: 2017,
+    gsf: 200000, cost: 125000000,
+    basis: "final",
+    blurb: "A daylit six-story library with a reading porch and rooftop garden, later named one of TIME's \"Greatest Places.\"",
+    source: "Texas Architect Magazine",
+    sourceUrl: "https://magazine.texasarchitects.org/2018/03/12/austin-central-library-the-public-responds/",
+    note: "Reported $120–125M; $125M used."
+  },
+  {
+    id: "uw-gates-center",
+    name: "Bill & Melinda Gates Center for CSE (Univ. of Washington)",
+    category: "education",
+    type: "University computer-science building",
+    city: "Seattle", state: "WA", year: 2019,
+    gsf: 135000, cost: 110000000,
+    basis: "final",
+    blurb: "A second computer-science building that let UW roughly double its CS enrollment, funded largely by tech-industry gifts.",
+    source: "Building Design + Construction / GeekWire",
+    sourceUrl: "https://www.bdcnetwork.com/home/news/55162391/the-bill-melinda-gates-center-for-computer-science-engineering-opens-on-the-university-of-washington-campus"
+  },
+  {
+    id: "whitney-museum",
+    name: "Whitney Museum of American Art (new building)",
+    category: "cultural",
+    type: "Art museum (Renzo Piano)",
+    city: "New York", state: "NY", year: 2015,
+    gsf: 220000, cost: 422000000,
+    basis: "final",
+    blurb: "Renzo Piano's asymmetrical steel-and-glass museum in the Meatpacking District, with column-free galleries and outdoor terraces beside the High Line.",
+    source: "Boston Globe / Wikipedia",
+    sourceUrl: "https://en.wikipedia.org/wiki/Whitney_Museum"
+  },
+  {
+    id: "academy-museum",
+    name: "Academy Museum of Motion Pictures",
+    category: "cultural",
+    type: "Film museum (renov. + Geffen sphere)",
+    city: "Los Angeles", state: "CA", year: 2021,
+    gsf: 300000, cost: 482000000,
+    basis: "final",
+    blurb: "A Renzo Piano project pairing the restored 1939 May Company building with a spherical concrete theater.",
+    funFact: "Costs rose from roughly $250M to $482M over the long development.",
+    source: "Wikipedia",
+    sourceUrl: "https://en.wikipedia.org/wiki/Academy_Museum_of_Motion_Pictures"
+  },
+  {
+    id: "music-city-center",
+    name: "Music City Center",
+    category: "civic",
+    type: "Convention center",
+    city: "Nashville", state: "TN", year: 2013,
+    gsf: 2100000, cost: 623000000,
+    basis: "final",
+    blurb: "A 2.1M-SF downtown convention complex with a sweeping guitar-inspired roofline — big-box exhibition space at a low $/SF.",
+    source: "Wikipedia / Clark Construction",
+    sourceUrl: "https://en.wikipedia.org/wiki/Music_City_Center"
+  },
+  {
+    id: "globe-life-field",
+    name: "Globe Life Field",
+    category: "sports",
+    type: "MLB ballpark (retractable roof)",
+    city: "Arlington", state: "TX", year: 2020,
+    gsf: 1800000, cost: 1200000000,
+    basis: "final",
+    blurb: "The Texas Rangers' retractable-roof ballpark, financed 50/50 by the city and the club. Its single-panel roof is among the largest in the world.",
+    source: "Wikipedia",
+    sourceUrl: "https://en.wikipedia.org/wiki/Globe_Life_Field"
+  },
+  {
+    id: "salesforce-transit-center",
+    name: "Salesforce Transit Center",
+    category: "civic",
+    type: "Regional transit center (5 floors, rooftop park)",
+    city: "San Francisco", state: "CA", year: 2018,
+    gsf: 1500000, cost: 2320000000,
+    basis: "final",
+    blurb: "A five-story transit hub topped by a 5.4-acre public park, replacing the seismically deficient 1939 Transbay Terminal.",
+    source: "WSP / Railway Technology",
+    sourceUrl: "https://www.wsp.com/en-us/insights/salesforce-transit-center-opening"
+  },
+  {
+    id: "hunters-point-library",
+    name: "Hunters Point Library",
+    category: "civic",
+    type: "Public library (Steven Holl, 6 vertical levels)",
+    city: "Queens (New York)", state: "NY", year: 2019,
+    gsf: 22000, cost: 41500000,
+    basis: "final",
+    blurb: "A small, sculptural Steven Holl branch library on the East River — proof that small doesn't mean cheap.",
+    funFact: "At ~$1,800 per square foot, this tiny library cost more per SF than most skyscrapers.",
+    source: "NYC DDC (official) / Architectural Record",
+    sourceUrl: "https://www.nyc.gov/site/ddc/about/press-releases/2019/pr-092419-hp-library.page"
+  },
+  {
+    id: "harrisburg-courthouse",
+    name: "New U.S. Courthouse — Harrisburg",
+    category: "federal",
+    type: "Federal courthouse",
+    city: "Harrisburg", state: "PA", year: 2018,
+    gsf: 224000, cost: 192752000,
+    basis: "authorized",
+    blurb: "A new midtown Harrisburg courthouse (~243,000 GSF including parking) to replace the aging Reagan Federal Building.",
+    source: "GSA FY2018 Prospectus",
+    sourceUrl: "https://www.gsa.gov/system/files/FY2018_Harrisburg_PA_New_U.S._Courthouse.pdf",
+    note: "GSA-stated Estimated Total Project Cost from the official prospectus."
+  },
+  {
+    id: "kci-new-terminal",
+    name: "New Terminal, Kansas City International Airport",
+    category: "civic",
+    type: "Airport terminal (40 gates, LEED Gold)",
+    city: "Kansas City", state: "MO", year: 2023,
+    gsf: 1000000, cost: 1500000000,
+    basis: "final",
+    blurb: "A single-terminal replacement — the largest infrastructure project in the city's history — delivered about 60 days early and ~$45M under budget.",
+    source: "Construction Dive / flykc.com",
+    sourceUrl: "https://www.constructiondive.com/news/15b-airport-terminal-opens-in-kansas-city-clark-construction/644337/"
+  },
+  {
+    id: "kellogg-global-hub",
+    name: "Kellogg Global Hub, Northwestern University",
+    category: "education",
+    type: "University business-school building",
+    city: "Evanston", state: "IL", year: 2017,
+    gsf: 415000, cost: 250000000,
+    basis: "final",
+    blurb: "A glassy lakefront home for Northwestern's Kellogg School of Management, full of tiered collaboration spaces.",
+    source: "The Architect's Newspaper / Northwestern",
+    sourceUrl: "https://www.archpaper.com/2017/06/global-hub-northwestern-university/"
+  },
+  {
+    id: "wilshire-grand",
+    name: "Wilshire Grand Center",
+    category: "commercial",
+    type: "Office + hotel supertall (73 floors, 1,100 ft)",
+    city: "Los Angeles", state: "CA", year: 2017,
+    gsf: 1500005, cost: 1200000000,
+    basis: "final",
+    blurb: "A spire-topped tower mixing Class-A office, retail and an InterContinental hotel — the tallest building in the U.S. west of Chicago.",
+    source: "Wikipedia",
+    sourceUrl: "https://en.wikipedia.org/wiki/Wilshire_Grand_Center"
+  },
+  {
+    id: "sutter-cpmc-van-ness",
+    name: "Sutter CPMC Van Ness Campus Hospital",
+    category: "healthcare",
+    type: "Acute-care hospital (OSHPD seismic, 274 beds)",
+    city: "San Francisco", state: "CA", year: 2019,
+    gsf: 1015000, cost: 2100000000,
+    basis: "final",
+    blurb: "An 11-patient-floor acute-care hospital in downtown San Francisco, built to California's stringent seismic hospital standard.",
+    source: "Sutter Health (official) / SmithGroup",
+    sourceUrl: "https://news.sutterhealth.org/2019/03/02/new-sutter-cpmc-van-ness-campus-hospital-opens-doors-heart-san-francisco/"
+  }
+];

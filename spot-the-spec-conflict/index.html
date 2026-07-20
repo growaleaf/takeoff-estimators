@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.svg">
+  <title>Spot the Spec Conflict — a daily puzzle for MEP estimators | The Hive</title>
+  <meta name="description" content="A daily 30-second puzzle for construction estimators and preconstruction pros: read a short spec excerpt and find the buried MEP scope gap, owner-overlay trap, or cross-reference contradiction — the exact thing your eye is trained to catch during pre-bid. Scored, streaks, shareable. Free, no signup.">
+  <meta property="og:title" content="Spot the Spec Conflict — the daily puzzle for MEP estimators">
+  <meta property="og:description" content="Read a short spec excerpt. Find the buried scope gap, owner override, or cross-reference contradiction before it costs the bid. Daily puzzle + unlimited practice. Free.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://takeoff.buildtodogood.com/favicon.svg">
+  <meta property="og:url" content="https://takeoff.buildtodogood.com/spot-the-spec-conflict/">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://takeoff.buildtodogood.com/spot-the-spec-conflict/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/cookie-consent.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8335376690790226" crossorigin="anonymous"></script>
+
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Spot the Spec Conflict",
+    "description": "A daily puzzle for MEP estimators and preconstruction professionals. Read a short specification excerpt and find the buried scope gap, owner-overlay trap, or cross-reference contradiction — the skill estimators use during pre-bid spec review. Scored, with streaks and a shareable result.",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Web",
+    "url": "https://takeoff.buildtodogood.com/spot-the-spec-conflict/",
+    "provider": { "@type": "Organization", "name": "The Hive Makes", "url": "https://takeoff.buildtodogood.com" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }</script>
+
+  <style>
+    .game-wrap { max-width: 720px; margin: 0 auto; }
+    .tool-intro { margin: 0 0 1.25rem; }
+    .tool-intro h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 0.5rem; }
+    .tool-intro .lede { color: var(--text-light); font-size: 1.05rem; line-height: 1.6; margin-bottom: 0.75rem; }
+
+    /* mode toggle */
+    .mode-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin: 0.5rem 0 1.25rem; }
+    .mode-btn {
+      background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 0.5rem 0.9rem; font-family: inherit; font-size: 0.85rem; font-weight: 700;
+      color: var(--text-light); cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .mode-btn.active { border-color: var(--amber); color: var(--text); background: var(--selected-bg); }
+    .mode-btn:hover { border-color: var(--amber); }
+
+    /* stat chips */
+    .streak-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-left: auto; }
+    .chip {
+      background: var(--stat-bg); border: 1px solid var(--border); border-radius: 999px;
+      padding: 0.3rem 0.75rem; font-size: 0.78rem; font-weight: 700; color: var(--text-light); white-space: nowrap;
+    }
+    .chip strong { color: var(--amber); font-weight: 800; }
+
+    /* puzzle card */
+    .card {
+      background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 14px;
+      padding: 1.25rem 1.25rem 1.4rem; margin-bottom: 1.25rem;
+    }
+    .puz-head { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+    .puz-num { font-weight: 800; font-size: 1.05rem; }
+    .tag { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.2rem 0.55rem; border-radius: 6px; border: 1px solid var(--border); color: var(--text-light); background: var(--stat-bg); }
+    .tag.disc { color: var(--amber-dark); border-color: var(--amber); }
+    .dots { color: var(--amber); font-size: 0.9rem; letter-spacing: 1px; }
+    .dots .off { color: var(--border); }
+
+    .context { font-style: italic; color: var(--text-light); font-size: 0.95rem; margin: 0.4rem 0 0.35rem; }
+    .illus-note { font-size: 0.72rem; color: var(--placeholder); margin-bottom: 0.9rem; }
+
+    .prompt { font-weight: 800; font-size: 0.95rem; margin: 0.2rem 0 0.85rem; }
+
+    .clauses { display: flex; flex-direction: column; gap: 0.6rem; }
+    .clause {
+      text-align: left; width: 100%; cursor: pointer; font-family: inherit;
+      background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 11px;
+      padding: 0.8rem 0.9rem; color: var(--text); transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      line-height: 1.5; font-size: 0.92rem;
+    }
+    .clause:hover:not(:disabled) { border-color: var(--amber); }
+    .clause:active:not(:disabled) { transform: scale(0.995); }
+    .clause .ref { display: block; font-weight: 800; font-size: 0.74rem; letter-spacing: 0.03em; color: var(--text-light); margin-bottom: 0.2rem; }
+    .clause .cn { color: var(--amber-dark); }
+    .clause:disabled { cursor: default; }
+    .clause.correct { border-color: #2e9e5b; background: rgba(46,158,91,0.12); }
+    .clause.wrong { border-color: #cf4b3a; background: rgba(207,75,58,0.10); opacity: 0.85; }
+    .clause .mark { float: right; font-weight: 800; }
+    .clause.correct .mark { color: #2e9e5b; }
+    .clause.wrong .mark { color: #cf4b3a; }
+
+    /* reveal */
+    .reveal { margin-top: 1.1rem; border-top: 1px dashed var(--border); padding-top: 1rem; display: none; }
+    .reveal.show { display: block; animation: fade 0.3s ease; }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px);} to {opacity:1; transform:none;} }
+    .verdict { font-weight: 800; font-size: 1.05rem; margin-bottom: 0.5rem; }
+    .verdict .ok { color: #2e9e5b; } .verdict .miss { color: #cf4b3a; }
+    .reveal .row { margin-bottom: 0.75rem; }
+    .reveal .lbl { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--amber-dark); display: block; margin-bottom: 0.15rem; }
+    .reveal .row p { margin: 0; font-size: 0.92rem; line-height: 1.6; }
+    .ctype { display: inline-block; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.2rem 0.6rem; border-radius: 6px; background: var(--selected-bg); border: 1px solid var(--amber); color: var(--amber-dark); margin-bottom: 0.6rem; }
+
+    .actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+    .btn {
+      padding: 0.7rem 1.15rem; border-radius: 11px; font-family: inherit; font-size: 0.9rem; font-weight: 800;
+      cursor: pointer; border: 1.5px solid var(--border); background: var(--input-bg); color: var(--text); transition: all 0.15s;
+    }
+    .btn:hover { border-color: var(--amber); }
+    .btn.primary { background: var(--amber); color: #fff; border-color: var(--amber); }
+    .btn.primary:hover { background: var(--amber-dark); border-color: var(--amber-dark); }
+    .share-box { margin-top: 0.9rem; display: none; }
+    .share-box.show { display: block; }
+    .share-pre {
+      white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem;
+      background: var(--stat-bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 0.9rem; line-height: 1.5; color: var(--text);
+    }
+    .copied { font-size: 0.8rem; color: #2e9e5b; font-weight: 700; margin-left: 0.5rem; }
+
+    .how { background: var(--stat-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.15rem; margin-bottom: 1.25rem; font-size: 0.9rem; line-height: 1.6; }
+    .how b { color: var(--text); }
+
+    .crosslinks { border-top: 1px solid var(--border); margin-top: 1.5rem; padding-top: 1.25rem; }
+    .crosslinks h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 0.4rem; }
+    .crosslinks p { font-size: 0.92rem; color: var(--text-light); line-height: 1.6; margin-bottom: 0.9rem; }
+    .xl-list { display: grid; grid-template-columns: 1fr; gap: 0.7rem; }
+    @media (min-width: 560px) { .xl-list { grid-template-columns: 1fr 1fr; } }
+    .xl-card { display: block; padding: 0.9rem 1rem; border: 1px solid var(--amber); background: var(--selected-bg); border-radius: 11px; text-decoration: none; color: inherit; transition: transform 0.15s; }
+    .xl-card:hover { transform: translateY(-2px); }
+    .xl-card strong { display: block; margin-bottom: 0.2rem; font-size: 0.95rem; }
+    .xl-card strong::after { content: " \2192"; color: var(--amber-dark); }
+    .xl-card em { font-style: normal; font-size: 0.8rem; color: var(--text-light); line-height: 1.45; }
+
+    .honesty { font-size: 0.8rem; color: var(--text-light); line-height: 1.6; margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+    .honesty b { color: var(--text); }
+
+    @media (max-width: 560px) {
+      .tool-intro h1 { font-size: 1.6rem; }
+      .streak-row { margin-left: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <nav style="max-width:900px;margin:0 auto;padding:14px 20px"><a href="/" style="text-decoration:none;font-weight:700">← Takeoff</a></nav>
+
+  <main>
+    <div class="game-wrap">
+      <div class="tool-intro">
+        <h1>Spot the Spec Conflict</h1>
+        <p class="lede">A short spec excerpt. One buried scope gap, owner-overlay trap, or cross-reference contradiction — the exact thing your eye is trained to catch during pre-bid review. Find it before it costs the bid.</p>
+      </div>
+
+      <div class="mode-row">
+        <button class="mode-btn active" id="modeDaily" onclick="setMode('daily')">Daily</button>
+        <button class="mode-btn" id="modeUnlimited" onclick="setMode('unlimited')">Unlimited practice</button>
+        <div class="streak-row" id="streakRow"></div>
+      </div>
+
+      <div class="how" id="howBox">
+        <b>How it plays:</b> Read the clauses. Tap the one an estimator must flag — the clause you can't take at face value. Fewer taps is a cleaner solve. The daily puzzle is the same for everyone; solve it every day to build a streak. Every solve reveals <b>why</b> it's a conflict and <b>what it costs a bid</b>.
+      </div>
+
+      <div class="card" id="puzzleCard"><!-- rendered by JS --></div>
+
+      <div class="crosslinks">
+        <h2>Do it on your own spec book next</h2>
+        <p>You caught it here in seconds. On a 1,200-page project manual, the same traps are buried across dozens of sections. These read the documents you give them and cite every finding — or refuse the claim.</p>
+        <div class="xl-list">
+          <a class="xl-card" href="/"><strong>Spec Book MEP-Scope Scanner</strong><em>Paste a spec section — get cited MEP-scope findings, owner overrides, and cross-reference contradictions, with an honest refuse list.</em></a>
+          <a class="xl-card" href="/"><strong>AI for MEP estimating teams</strong><em>The three tasks that eat a pre-bid — spec review, sub-bid leveling, code cross-reference — and how to cut them to minutes without fabrication.</em></a>
+        </div>
+      </div>
+
+      <div class="honesty">
+        <b>About these puzzles.</b> Every excerpt is an <b>illustrative teaching example</b> — composed in standard CSI MasterFormat section format, not lifted from any real project's proprietary specifications. What is real is the <b>conflict logic</b>: each trap mirrors a documented pre-bid failure mode — the Division 23&#8596;26 "who powers the damper" seam, owner-furnished connection responsibility, "Not Used" sections that are still cross-referenced, allowance/base double-coverage, supplementary-condition overrides, and so on. Section numbers, defined terms (Furnish / Install / Provide), and standards references (NFPA, ASSE, NETA, ASCE 7, UL firestop systems) reflect real conventions. Nothing here asserts what any specific jurisdiction currently enforces — code-edition puzzles keep the conflict internal to the documents shown. If a puzzle wouldn't survive an estimator's eye, it isn't in the set.
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Built by <a href="https://www.linkedin.com/in/build-ai-for-good">Dan Cohen</a> · <a href="/">More Takeoff games</a> &middot; <a href="/disclosures.html">Disclosures</a> &middot; <a href="#" onclick="showBanner(); return false;">Cookie settings</a>
+    <p>Built by The Hive — Wilmington, Delaware. Sharpen the eye; then let the tools carry the book.</p>
+  </footer>
+
+  <script src="/hive.js"></script>
+  <script>
+  /* ============================================================
+     SPOT THE SPEC CONFLICT
+     For the preconstruction MEP estimator at 9:40 PM the night
+     before a bid, on her third pass through Division 23 — and for
+     the next Claude who opens this file to add puzzles.
+     Puzzle content: illustrative CSI-format excerpts; the conflict
+     logic mirrors real pre-bid MEP estimating traps. No excerpt is
+     lifted from a real project. See the "About these puzzles" note.
+     ============================================================ */
+
+  const PUZZLES = [
+    {
+      id: 1, title: "The damper actuator nobody wired", disc: "Mech / Elec", diff: 2,
+      context: "HVAC scope review. Bid's Friday. You're leveling the ductwork accessories.",
+      clauses: [
+        { ref: "23 33 00 AIR DUCT ACCESSORIES — 2.4", text: "Provide combination fire/smoke dampers at all rated penetrations. Actuators and end-switch monitoring wiring shall be furnished and installed under Division 26." },
+        { ref: "23 33 00 — 3.2", text: "Coordinate damper locations with the rated-wall assemblies shown on the architectural life-safety plans." },
+        { ref: "26 05 00 COMMON WORK RESULTS FOR ELECTRICAL — 1.3", text: "Actuators, controls, and low-voltage wiring for mechanical equipment are furnished under Division 23. This Division provides line-voltage power only." }
+      ],
+      answer: 0, ctype: "Cross-reference contradiction → scope gap",
+      why: "Clause 1 hands the fire/smoke damper actuators and end-switch wiring to Division 26 — but Division 26 (clause 3) explicitly excludes actuators and control wiring for mechanical equipment and hands them right back to Division 23. The actuators live in the seam. Neither trade's base bid carries them. The trained move: whenever a section says “by Division 26,” go verify Division 26 actually accepts it. Here it doesn't.",
+      cost: "On 40–80 combination dampers at roughly $300–$700 installed per actuator + wiring, that's ~$15k–$50k of uncarried scope — a change order after award, or an eaten cost.",
+      standard: "The Div 23↔Div 26 “who powers the damper” seam is one of the most common MEP scope gaps; combination fire/smoke dampers require powered actuation and monitored end switches under IBC / NFPA 90A."
+    },
+    {
+      id: 2, title: "Owner-furnished ≠ your problem — except the connections", disc: "Plumb / Elec", diff: 1,
+      context: "K-12 kitchen renovation. You almost skip the foodservice line because it's owner-furnished.",
+      clauses: [
+        { ref: "11 40 00 FOODSERVICE EQUIPMENT — 1.2", text: "All foodservice equipment is Owner-Furnished, Owner-Installed (OFOI). Refer to the FS-series drawings for rough-in requirements." },
+        { ref: "22 05 00 PLUMBING — 3.6", text: "Provide final connections to Owner-furnished equipment where rough-in is indicated; verify rough-in against approved foodservice shop drawings before rough-in." },
+        { ref: "26 27 00 — 3.4", text: "Provide final electrical connections to foodservice equipment as indicated on the FS-series and electrical drawings." }
+      ],
+      answer: 0, ctype: "Owner-furnished responsibility trap",
+      why: "The equipment is owner-furnished and owner-set — so the pull is to drop the whole line. But clauses 2 and 3 still put the plumbing and electrical rough-in AND final connections on you. “OFOI” means the owner's vendor sets the box; the utilities to it are yours. Miss it and you've bid zero for connections across 30–60 pieces of kitchen equipment.",
+      cost: "Rough-in + final connections for a commercial kitchen (grease waste, gas, domestic water, 208/480V) run $40k–$120k+. Dropping it because “equipment is by owner” is a bid-buster.",
+      standard: "Owner-furnished connection responsibility is a canonical estimating trap; the FS-series drives MEP rough-in, and the Div 22/26 execution clauses assign the connections regardless of who furnishes the unit."
+    },
+    {
+      id: 3, title: "The section that was cited but deleted", disc: "Mechanical", diff: 2,
+      context: "You're pricing HVAC seismic restraint and chasing the criteria.",
+      clauses: [
+        { ref: "23 05 00 COMMON WORK RESULTS FOR HVAC — 1.5", text: "Provide vibration isolation and seismic restraint for all HVAC equipment in accordance with Section 23 05 48." },
+        { ref: "23 05 00 — 1.6", text: "Submit isolator and restraint calculations stamped by a professional engineer licensed in the project state." },
+        { ref: "TABLE OF CONTENTS — Division 23", text: "23 05 48  Vibration and Seismic Controls for HVAC ................ NOT USED" }
+      ],
+      answer: 2, ctype: "Missing / “Not Used” section",
+      why: "Clause 1 sends you to Section 23 05 48 for the actual restraint criteria — but the Table of Contents (clause 3) marks 23 05 48 “NOT USED.” The referencing section survived a copy-paste; the referenced section was deleted. You still owe PE-stamped calcs (clause 2) with no criteria to price against. RFI it before bid instead of guessing.",
+      cost: "Seismic restraint on a full HVAC package swings $20k–$100k+ depending on Seismic Design Category and Ip. Bidding it blind is a coin-flip on your margin.",
+      standard: "“Referenced-but-Not-Used” is a real spec-assembly error from master-spec editing; the estimator's job is to catch the dangling reference and RFI it."
+    },
+    {
+      id: 4, title: "Two subs, one roof curb", disc: "Mech / Roofing", diff: 2,
+      context: "Rooftop units on a warehouse. You're checking who carries the curbs.",
+      clauses: [
+        { ref: "07 50 00 MEMBRANE ROOFING — 2.7", text: "Provide prefabricated insulated roof curbs for all rooftop mechanical equipment; coordinate sizes with Division 23." },
+        { ref: "23 74 00 PACKAGED ROOFTOP UNITS — 2.3", text: "Furnish factory roof curbs with each packaged rooftop unit; set curbs under this Section." },
+        { ref: "07 50 00 — 3.9", text: "Flash and counterflash all curbs, penetrations, and equipment supports." }
+      ],
+      answer: 0, ctype: "Double coverage (overlap)",
+      why: "Both the roofer (clause 1) and the HVAC contractor (clause 2) are told to provide the RTU curbs. Leave it unresolved and either two subs both carry it (you over-bid and lose) or each assumes the other has it (gap at buyout). Clause 3 — flashing — is correctly the roofer's and is NOT the conflict. Decide who furnishes curbs and qualify the bid.",
+      cost: "Insulated RTU curbs run ~$800–$2,500 each. On 10–20 units, double-counting is $16k–$50k of phantom cost that loses the job — or a gap that eats margin.",
+      standard: "The roof-curb overlap between Div 07 and Div 23 is a textbook double-coverage trap; one section furnishes, the other flashes."
+    },
+    {
+      id: 5, title: "“The spec governs” — are you sure?", disc: "Electrical", diff: 3,
+      context: "Panel LP-2 shows two different sizes. You reach for the spec, out of habit.",
+      clauses: [
+        { ref: "26 24 16 PANELBOARDS — 2.2", text: "Provide panelboards as scheduled. Panel ‘LP-2’: 42-circuit, 225A main lugs only." },
+        { ref: "DRAWING E-601 PANEL SCHEDULE", text: "Panel ‘LP-2’: 84-circuit, 400A main circuit breaker. (illustrative)" },
+        { ref: "00 72 00 GENERAL CONDITIONS — 1.2", text: "The Contract Documents are complementary; what is required by one is as binding as if required by all. No order of precedence between Drawings and Specifications is established; in a conflict, provide the greater quantity / higher quality and request clarification. (illustrative front-end language)" }
+      ],
+      answer: 0, ctype: "Precedence trap",
+      why: "The spec (clause 1) says 42-circuit / 225A; the drawing (clause 2) says 84-circuit / 400A. New estimators assume “the spec division governs” and bid the smaller panel. But the front end (clause 3) says the documents are complementary with no order of precedence — you must carry the greater scope and RFI. So the clause you can't take at face value is the undersized spec panel: bidding it as written undercarries the gear and its feeder.",
+      cost: "42→84 circuits, 225A→400A, plus the upsized feeder and conduit runs ~$4k–$12k per panel. Across several mismatched panels, tens of thousands.",
+      standard: "Absent a stated order of precedence, contract documents are complementary (the AIA A201 doctrine); the safe bid carries the greater scope and RFIs the conflict."
+    },
+    {
+      id: 6, title: "Temp power hides in Division 01", disc: "General / Elec", diff: 1,
+      context: "You've priced the permanent electrical. Now the front end.",
+      clauses: [
+        { ref: "01 50 00 TEMPORARY FACILITIES — 1.4", text: "Each subcontractor shall provide temporary lighting, power, and connections required for its own work beyond the general temporary service provided by the Construction Manager." },
+        { ref: "26 05 19 CONDUCTORS — 3.2", text: "Provide permanent branch circuits and feeders as shown on the drawings." },
+        { ref: "01 50 00 — 1.7", text: "The Construction Manager provides a single temporary power source at the building perimeter; distribution beyond that point is by the trades." }
+      ],
+      answer: 0, ctype: "Scope gap (temporary vs permanent)",
+      why: "The electrical technical section (clause 2) covers only permanent work. Division 01 (clauses 1 and 3) makes temporary lighting and power distribution — beyond the CM's single perimeter source — the trades' job. Price only the permanent conductors and you've missed temp distribution, temp lighting, and maintenance for the whole build. Clause 1 is where that scope quietly lands on the electrical sub.",
+      cost: "Temporary lighting/power over a multi-month build (temp panels, cords, string lighting, monthly maintenance, teardown) runs $25k–$150k by size and duration — pure omission if you only bid permanent gear.",
+      standard: "“Temp services by trades beyond the CM's point of service” is a routine Div 01 miss; temp power is priced separately from permanent branch circuits."
+    },
+    {
+      id: 7, title: "Who's certified to braze the med gas?", disc: "Plumbing", diff: 2,
+      context: "Ambulatory surgery center. You're rating the medical-gas rough-in.",
+      clauses: [
+        { ref: "22 63 00 MEDICAL GAS SYSTEMS — 1.6", text: "All brazing of medical gas piping shall be performed by installers certified to ASSE 6010; procedures qualified per NFPA 99. Third-party verification (ASSE 6030) by Owner." },
+        { ref: "22 63 00 — 2.1", text: "Copper tube, Type L (ACR), cleaned for oxygen service, capped and labeled." },
+        { ref: "22 63 00 — 3.4", text: "Pressure-test and purge all medical gas piping; provide test certificates." }
+      ],
+      answer: 0, ctype: "Owner overlay → certified labor",
+      why: "Clause 1 requires ASSE 6010-certified brazers and qualified procedures. Certified med-gas labor costs materially more than standard plumbing labor, and not every plumbing sub carries the certification. Clauses 2 and 3 are ordinary med-gas scope. Price it at standard journeyman rates and you undercarry the labor — or hand the job to a low sub who literally can't legally braze it.",
+      cost: "The certified-labor premium plus procedure qualification and documentation adds roughly 15–30% to the med-gas labor line — five figures on a hospital/ASC bid.",
+      standard: "NFPA 99 with ASSE 6010 (installer) / 6030 (verifier) certification is real and routinely drives med-gas labor cost and sub-selection."
+    },
+    {
+      id: 8, title: "The CxA is free. Your support labor isn't.", disc: "Multi", diff: 2,
+      context: "LEED project. You're skimming the Division 01 general requirements.",
+      clauses: [
+        { ref: "01 91 00 COMMISSIONING — 1.3", text: "The Commissioning Authority is engaged by the Owner. Mechanical, electrical, and plumbing contractors shall support commissioning: functional performance testing, seasonal testing, issue resolution, systems manuals, and training." },
+        { ref: "01 91 00 — 1.5", text: "Contractor commissioning support is incidental to the Work and included in the base bid; no separate allowance is provided." },
+        { ref: "23 08 00 — 1.2", text: "Startup of HVAC equipment by the manufacturer's representative." }
+      ],
+      answer: 1, ctype: "Owner overlay (commissioning cost)",
+      why: "Everyone reads “the CxA is engaged by the Owner” (clause 1) and moves on. The trap is clause 2: the contractor's commissioning SUPPORT — attending functional tests, returning months later for seasonal testing, resolving issues, building systems manuals, training — is base-bid with no allowance. Clause 3 (manufacturer startup) is normal and separate. Carry the support labor or eat it.",
+      cost: "Cx support labor across the MEP trades (multiple FPT sessions, a return trip for seasonal testing, documentation) commonly runs $15k–$80k on a mid-size LEED project — all in base bid per clause 2.",
+      standard: "ASHRAE Guideline 0 / LEED EA commissioning puts the CxA on the owner but trade-contractor SUPPORT on the trades; “incidental, no allowance” is the real cost driver."
+    },
+    {
+      id: 9, title: "Basis-of-design vs the schedule", disc: "Mechanical", diff: 3,
+      context: "You price the air handler off the spec's model number. Fast. Too fast.",
+      clauses: [
+        { ref: "23 73 00 AIR-HANDLING UNITS — 2.2", text: "Basis of Design: Manufacturer ‘X’ Model AHU-14, nominal 14,000 CFM, 40 HP supply fan." },
+        { ref: "DRAWING M-501 AHU SCHEDULE", text: "AHU-1: 20,000 CFM, 4.5\" total static pressure, 60 HP supply fan. (illustrative)" },
+        { ref: "23 73 00 — 2.5", text: "Provide factory-mounted variable-frequency drives on all supply and return fans." }
+      ],
+      answer: 0, ctype: "Basis-of-design vs scheduled performance",
+      why: "The spec's named Basis-of-Design model (clause 1) is a 14,000 CFM / 40 HP unit, but the drawing schedule (clause 2) demands 20,000 CFM / 60 HP. The scheduled performance governs the equipment size; the BOD model number is a quality/feature reference, not the capacity. Price the model and you've bid an undersized unit. Clause 3 (VFDs) adds cost to both — not the trap.",
+      cost: "A 14k→20k CFM AHU with a bigger fan, motor, and VFD is easily $20k–$60k more per unit; over several units, a six-figure underbid if you priced the BOD model.",
+      standard: "“Basis of Design model vs scheduled performance” mismatches are a real substitution trap; scheduled capacity governs, and the estimator prices to the schedule."
+    },
+    {
+      id: 10, title: "Paid for twice", disc: "Electrical", diff: 2,
+      context: "Networked lighting controls. Is it an allowance, or base scope, or both?",
+      clauses: [
+        { ref: "01 21 00 ALLOWANCES — 1.4", text: "Include a $75,000 allowance for the networked lighting control system, installed." },
+        { ref: "26 09 43 NETWORK LIGHTING CONTROLS — 1.1", text: "Furnish and install a complete networked lighting control system as specified and shown, including all devices, panels, programming, and commissioning." },
+        { ref: "26 09 43 — 3.5", text: "Provide manufacturer's on-site programming and owner training." }
+      ],
+      answer: 1, ctype: "Allowance / base double coverage",
+      why: "The lighting controls are covered by a $75k allowance (clause 1) AND fully specified as base-bid scope (clause 2, “furnish and install a complete… system”). Carry clause 2 in your base bid while the allowance stands, and the system is paid twice — you over-bid and lose. Reconcile it: the allowance covers the system; base bid carries only what sits outside the allowance (raceway, back-boxes). Clause 2 is the duplicate to flag.",
+      cost: "Double-carrying a $75k allowance system inflates the bid by up to $75k (loses the job) — or, netted wrong, drops the raceway. Either way it's a bid-integrity error.",
+      standard: "Allowance/base-scope overlap is a classic reconciliation task; the estimator defines the allowance boundary and qualifies the bid."
+    },
+    {
+      id: 11, title: "Excluded to a section that isn't there", disc: "Fire Protection", diff: 2,
+      context: "Design-build sprinkler scope. You read the exclusions carefully.",
+      clauses: [
+        { ref: "21 13 00 FIRE-SUPPRESSION SPRINKLER SYSTEMS — 1.4", text: "This Section excludes the fire pump and fire pump controller, which are specified under Section 21 30 00." },
+        { ref: "21 13 00 — 1.5", text: "Fire department connection, backflow preventer, and system risers are Work of this Section." },
+        { ref: "TABLE OF CONTENTS — Division 21", text: "21 30 00  Fire Pumps ................ (not listed)" }
+      ],
+      answer: 0, ctype: "Scope gap (excluded, never picked up)",
+      why: "The sprinkler section (clause 1) excludes the fire pump and controller and points to Section 21 30 00 — but 21 30 00 doesn't exist in the manual (clause 3). If the building's hydraulic demand exceeds available supply, a pump is required and no section carries it. Clause 2 is correct base scope. RFI whether a pump is needed and who owns it.",
+      cost: "A fire pump + controller + installation (jockey pump, test header, pump room work) is $60k–$200k+. If required and unassigned, it's the single biggest FP gap you can miss.",
+      standard: "“Excluded to a Section that was never issued” is a real gap; hydraulic demand vs available water supply determines whether a pump is required — an RFI item at bid."
+    },
+    {
+      id: 12, title: "Which code edition am I bidding?", disc: "Electrical", diff: 3,
+      context: "The electrical section pins one NEC edition. The front end says another.",
+      clauses: [
+        { ref: "26 05 00 — 1.4", text: "All electrical work shall comply with NFPA 70 (National Electrical Code), 2017 edition." },
+        { ref: "00 31 00 SUPPLEMENTARY CONDITIONS — 1.2", text: "All work shall comply with the codes adopted and enforced by the Authority Having Jurisdiction as of the bid date, including all state amendments. (illustrative)" },
+        { ref: "26 05 26 GROUNDING — 3.1", text: "Bond all metallic systems per Article 250." }
+      ],
+      answer: 0, ctype: "Edition conflict (internal)",
+      why: "The electrical section (clause 1) hard-codes NFPA 70-2017, but the front end (clause 2) requires the edition the AHJ currently enforces — which may be newer. If the enforced edition carries more restrictive requirements (expanded GFCI/AFCI, surge protection, outdoor emergency disconnects), pricing to the stale 2017 citation undercarries. Flag the pinned edition and confirm the enforced one by RFI — don't just take the section's number. Clause 3 is ordinary scope.",
+      cost: "An NEC edition step can add surge protective devices, emergency disconnects, and expanded GFCI — thousands to tens of thousands across a building's device and gear count.",
+      standard: "Hard-coded code editions that lag the AHJ's adopted edition are a real internal conflict; the front-end “AHJ-enforced edition governs” clause supersedes the stale technical-section citation. (This puzzle keeps the conflict internal to the documents — it asserts nothing about any real jurisdiction.)"
+    },
+    {
+      id: 13, title: "VFDs in the seam", disc: "Mech / Elec", diff: 2,
+      context: "Hydronic pumps with variable speed. Div 23 or Div 26 furnishes the drives?",
+      clauses: [
+        { ref: "23 21 23 HYDRONIC PUMPS — 2.4", text: "Provide variable-frequency drives for all variable-speed pumps; VFDs furnished under Division 26 and set under this Section." },
+        { ref: "26 29 23 VARIABLE-FREQUENCY MOTOR CONTROLLERS — 1.2", text: "VFDs for HVAC equipment are furnished and installed under Division 23. This Section covers VFDs for non-HVAC motor loads only." },
+        { ref: "23 21 23 — 3.2", text: "Align and grout pump bases; provide suction diffusers and triple-duty valves." }
+      ],
+      answer: 0, ctype: "Cross-reference contradiction → gap",
+      why: "Clause 1 says the pump VFDs are furnished under Division 26; Division 26 (clause 2) says HVAC VFDs are furnished under Division 23 and it only handles non-HVAC loads. The VFDs fall in the seam. On a hydronic system with several variable-speed pumps — plus any tower or AHU fan VFDs — that's real money uncarried. Chase clause 1's reference and you find Division 26 disclaims it. Clause 3 is standard pump scope.",
+      cost: "Pump VFDs run ~$2k–$8k each installed; a handful plus programming and harmonic mitigation is $15k–$60k of gap.",
+      standard: "The HVAC-VFD furnishing seam between Div 23 and Div 26 is a very common contradiction; VFDs must be assigned to exactly one division."
+    },
+    {
+      id: 14, title: "Read the verb", disc: "Plumbing", diff: 3,
+      context: "The definitions page matters more than it looks.",
+      clauses: [
+        { ref: "22 05 00 — 1.3 DEFINITIONS", text: "‘Furnish’ means supply and deliver to the site. ‘Install’ means set in place and connect. ‘Provide’ means furnish and install." },
+        { ref: "22 11 00 — 2.1", text: "Install Owner-furnished water meters and reduced-pressure-zone (RPZ) backflow assemblies at the service entrance." },
+        { ref: "22 11 00 — 3.4", text: "Provide all piping, valves, hangers, and appurtenances for the domestic water distribution system." }
+      ],
+      answer: 1, ctype: "Defined-terms scope trap",
+      why: "Per the definitions (clause 1), ‘Install’ means set and connect only — NOT supply. Clause 2 says INSTALL Owner-furnished meters and RPZ assemblies: the owner supplies them, you set and connect. Skim it and you either carry the cost of pricey RPZ/meter hardware that's owner-furnished, or forget the install labor entirely. Clause 3 uses ‘Provide’ (furnish + install) correctly. The verb is the whole puzzle.",
+      cost: "RPZ backflow assemblies and large water meters are $2k–$15k each; misreading ‘install’ vs ‘provide’ mis-carries several thousand dollars and mis-allocates responsibility.",
+      standard: "Furnish / Install / Provide are defined terms in Part 1; disciplined estimators price exactly to the verb."
+    },
+    {
+      id: 15, title: "One year, or five?", disc: "Multi", diff: 2,
+      context: "Warranty length. The mechanical section says one thing; the front end says another.",
+      clauses: [
+        { ref: "23 05 00 — 1.8", text: "Provide the manufacturer's standard one-year warranty on all HVAC equipment from date of Substantial Completion." },
+        { ref: "00 73 00 OWNER'S SUPPLEMENTARY CONDITIONS — 1.9", text: "Notwithstanding any provision in the technical Sections, all mechanical and electrical systems shall carry a minimum five-year parts-and-labor warranty; compressors ten years. (illustrative)" },
+        { ref: "23 64 00 — 2.1", text: "Water-cooled centrifugal chillers with microprocessor controls." }
+      ],
+      answer: 0, ctype: "Owner overlay (supplementary conditions win)",
+      why: "The technical section (clause 1) offers a standard one-year warranty, but the Owner's Supplementary Conditions (clause 2) override it to five years parts-and-labor, ten on compressors. Supplementary Conditions supersede the technical sections. Extended warranty/service is a carried cost — extended-warranty pricing from the manufacturer, or a self-performed service reserve. Don't price the one-year when clause 2 overrides to five. Clause 3 is equipment scope.",
+      cost: "Extended five-year parts-and-labor warranties on chillers, RTUs, and pumps add roughly 2–6% of equipment value — tens of thousands on a large mechanical package.",
+      standard: "Supplementary Conditions override technical-section provisions; extended-warranty requirements buried in the front end are a routine cost the estimator must catch."
+    },
+    {
+      id: 16, title: "The access door nobody furnishes", disc: "Multi", diff: 2,
+      context: "Access doors in rated walls and hard ceilings. Three sections, one hole.",
+      clauses: [
+        { ref: "23 05 00 — 3.7", text: "Furnish access doors for concealed HVAC devices to Division 08 for installation; fire-rated doors where in rated construction." },
+        { ref: "22 05 00 — 3.7", text: "Provide access to concealed valves and cleanouts. (silent on furnishing access doors)" },
+        { ref: "08 31 00 ACCESS DOORS AND FRAMES — 1.2", text: "Access doors furnished under other Sections are installed under this Section; this Section furnishes none." }
+      ],
+      answer: 1, ctype: "Scope gap (a silent section)",
+      why: "HVAC (clause 1) furnishes its access doors to Division 08, and Division 08 (clause 3) installs doors furnished by others but furnishes none itself. Plumbing (clause 2) requires access to concealed valves and cleanouts but is SILENT on who furnishes the doors — and Division 08 won't. So the plumbing access doors (shutoff valves, cleanouts, trap primers, backflow) fall in the gap. The silent section is the one to flag.",
+      cost: "Rated and unrated access doors are $75–$400 each; across a building's concealed plumbing valves and cleanouts that's $5k–$25k — plus the schedule hit of chasing them during finishes.",
+      standard: "Access-door furnishing is a notorious three-way responsibility gap (MEP furnishes, Div 08 installs, Div 09 finishes); a section silent on furnishing creates the hole."
+    },
+    {
+      id: 17, title: "Essential facility, default Ip", disc: "Multi", diff: 3,
+      context: "Seismic restraint. The section defaults Ip = 1.0. The front end disagrees.",
+      clauses: [
+        { ref: "23 05 48 SEISMIC CONTROLS — 1.3", text: "Provide seismic restraint for all equipment. Component Importance Factor Ip = 1.0 unless noted." },
+        { ref: "00 31 00 — 1.4", text: "This facility is designated an Essential Facility (Risk Category IV); designated seismic systems shall be designed for Ip = 1.5 with special seismic certification where required by ASCE 7. (illustrative)" },
+        { ref: "23 05 48 — 3.2", text: "Restraints by a manufacturer with ICC-ES or OSHPD/OSP preapproval where required." }
+      ],
+      answer: 0, ctype: "Owner overlay / code conflict",
+      why: "Clause 1 defaults Ip = 1.0, but the front end (clause 2) designates the building Risk Category IV / Essential Facility with Ip = 1.5 and special seismic certification for designated systems. Ip = 1.5 plus certified equipment is dramatically more expensive than 1.0. Price the section's default and you undercarry. Flag the default Ip contradicted by the essential-facility designation. Clause 3 (preapproval) applies either way.",
+      cost: "Special seismic certification and Ip = 1.5 restraint can multiply the restraint line 1.5–3× and force certified equipment — five- to six-figure swings on hospitals and critical facilities.",
+      standard: "ASCE 7 Component Importance Factor and Risk Category IV special certification are real, major seismic cost drivers; the front-end facility designation overrides a section's default Ip. (Conflict kept internal to the documents.)"
+    },
+    {
+      id: 18, title: "Insulate through the rated wall?", disc: "Mech / FP", diff: 2,
+      context: "Duct insulation continuity vs the tested firestop system at rated walls.",
+      clauses: [
+        { ref: "23 07 00 HVAC INSULATION — 3.4", text: "Insulate all supply and return ductwork; maintain insulation continuity through wall penetrations." },
+        { ref: "07 84 00 FIRESTOPPING — 1.2", text: "Provide firestopping at all penetrations of fire-rated assemblies using tested UL systems for each penetrant; coordinate penetrant sizes and annular space with the trades." },
+        { ref: "23 33 00 — 3.5", text: "Seal duct penetrations of non-rated partitions with acoustical sealant." }
+      ],
+      answer: 0, ctype: "Cross-reference coordination trap",
+      why: "Clause 1 tells HVAC to maintain insulation continuity THROUGH wall penetrations — but at fire-rated walls, the tested UL firestop system (clause 2) dictates whether the insulation is continuous or interrupted and what fills the annular space. Insulating “through” a rated penetration can violate the listed system. Reconcile clause 1 with the UL systems before it becomes rework. Clause 3 (non-rated sealant) is fine.",
+      cost: "Less a dollar bomb than a rework and inspection-failure risk — but firestop rework at hundreds of penetrations plus failed inspections carries real labor and schedule cost.",
+      standard: "Firestopping at rated penetrations must follow tested UL systems; insulation continuity vs listed-system requirements is a genuine Div 07 ↔ Div 23 conflict."
+    },
+    {
+      id: 19, title: "“Integrate everything” — except the units without a card", disc: "Controls", diff: 2,
+      context: "BAS integration of the packaged rooftop units.",
+      clauses: [
+        { ref: "23 09 00 INSTRUMENTATION AND CONTROLS — 2.6", text: "Provide a complete DDC building automation system; integrate all HVAC equipment furnished with factory controls via BACnet." },
+        { ref: "23 74 00 — 2.4", text: "Packaged rooftop units furnished with manufacturer's standalone controls; BACnet gateway card provided only where scheduled." },
+        { ref: "23 09 00 — 3.3", text: "Provide graphics, trends, and alarms for all points in the points schedule." }
+      ],
+      answer: 1, ctype: "Scope gap (integration)",
+      why: "The controls section (clause 1) says integrate all factory-controlled equipment via BACnet, and clause 3 demands every point on the schedule. But clause 2 supplies the BACnet gateway card only WHERE SCHEDULED — if the schedule omits it on some RTUs, those units can't integrate, yet the requirement stands. Catch which units lack the card (added cost / RFI) instead of assuming seamless integration. Clause 2 is the limitation that undercuts the requirement.",
+      cost: "BACnet gateway cards plus integration labor are ~$500–$2,500 per unit; missing them forces change orders and can blow the commissioning / points requirements.",
+      standard: "Factory-controls integration gaps (missing protocol cards, proprietary points) are a real controls estimating trap; “integrate all” vs “gateway where scheduled” is a genuine conflict."
+    },
+    {
+      id: 20, title: "Owner pays the inspector. Who pays NETA?", disc: "Electrical", diff: 2,
+      context: "Acceptance testing of the electrical distribution. Owner cost, or yours?",
+      clauses: [
+        { ref: "26 08 00 TESTING OF ELECTRICAL SYSTEMS — 1.3", text: "Provide independent acceptance testing of all electrical distribution equipment by a NETA-accredited agency (per NETA ATS)." },
+        { ref: "26 08 00 — 1.4", text: "The testing agency shall be engaged and paid by the electrical Contractor and be independent of the installing Contractor." },
+        { ref: "01 45 00 QUALITY CONTROL — 1.5", text: "Special inspections required by the building code are engaged and paid by the Owner." }
+      ],
+      answer: 1, ctype: "Scope allocation (who pays testing)",
+      why: "Code special inspections are owner-paid (clause 3), which lulls estimators into assuming testing is too. But clause 2 puts the NETA acceptance-testing agency on the electrical Contractor's dime. NETA ATS testing of switchgear, transformers, breakers, relays, and cables is a real, sizable subcontract. Flag clause 2 — contractor-paid NETA testing, distinct from owner-paid special inspections.",
+      cost: "NETA acceptance testing across a full distribution system (switchgear, transformers, protective relays, feeders) commonly runs $20k–$100k+ — pure omission if assumed owner-paid.",
+      standard: "NETA ATS acceptance testing is frequently the contractor's cost; conflating it with owner-paid code special inspections is a real allocation error."
+    },
+    {
+      id: 21, title: "The five-foot line that doesn't meet", disc: "Plumb / Site", diff: 2,
+      context: "Underground sanitary. Where does building plumbing hand off to site utilities?",
+      clauses: [
+        { ref: "22 13 00 SANITARY SEWERAGE — 3.2", text: "Building sanitary drainage installed to a point 5 feet outside the building foundation; excavation and backfill within that limit under this Section." },
+        { ref: "33 30 00 SANITARY UTILITY SEWERS — 3.1", text: "Site sanitary sewer installed from the municipal main to a point 10 feet outside the building; excavation and restoration under this Section." },
+        { ref: "31 20 00 EARTH MOVING — 3.4", text: "Trench excavation for utilities is by the respective utility Sections, not this Section." }
+      ],
+      answer: 1, ctype: "Scope gap (demarcation mismatch)",
+      why: "Building plumbing (clause 1) stops 5 feet outside; the site utility (clause 2) stops 10 feet outside. The pipe — and the excavation — between the 5-foot and 10-foot lines belongs to neither section. Earthwork (clause 3) disclaims utility trenching. It's a literal gap in the ground, and worse, each sub assumes the other made the connection. Flag the mismatched demarcation and RFI to close the band and assign the tie-in.",
+      cost: "A short segment, but an unassigned tie-in plus excavation and a missed connection is $3k–$20k and a coordination headache — or a finger-pointing gap on bid day.",
+      standard: "The “5 feet outside the building” demarcation between Div 22 plumbing and Div 33 site utilities is standard; mismatched distances create a real gap the estimator must catch."
+    },
+    {
+      id: 22, title: "Painted — only if it's on the schedule", disc: "Multi", diff: 1,
+      context: "Finish painting of exposed ductwork and piping in an open-ceiling space.",
+      clauses: [
+        { ref: "23 05 00 — 3.9", text: "Prime-coat ferrous supports and hangers under this Section. Finish painting of exposed ductwork and piping by Division 09." },
+        { ref: "09 91 00 PAINTING — 1.3", text: "Includes finish painting of exposed mechanical and electrical items scheduled to be painted. Items not scheduled are not included." },
+        { ref: "23 07 00 — 3.4", text: "Provide factory-finished jacketing on exposed insulated piping in finished areas." }
+      ],
+      answer: 1, ctype: "Scope gap (conditional exclusion)",
+      why: "HVAC (clause 1) hands finish painting to Division 09. But Division 09 (clause 2) only paints items SCHEDULED to be painted — “items not scheduled are not included.” If the finish schedule doesn't list the exposed duct and pipe, the painting falls in a gap: HVAC excluded it, Div 09 excluded the unscheduled items. Verify the paint schedule actually lists the MEP items. Clause 3 (factory jacketing) reduces some painting but isn't the conflict.",
+      cost: "Painting exposed MEP in open-ceiling areas (spray, two coats, masking) runs $10k–$40k — a real gap if neither trade carries it.",
+      standard: "“Finish painting of MEP by Div 09, only if scheduled” is a common gap; the estimator confirms scope against the finish schedule."
+    },
+    {
+      id: 23, title: "Flash it — and void the roof warranty", disc: "Plumb / Roofing", diff: 2,
+      context: "Plumbing vents through a warrantied membrane roof. Who flashes the penetrations?",
+      clauses: [
+        { ref: "22 05 00 — 3.7", text: "Extend plumbing vents 12 inches above the finished roof." },
+        { ref: "07 62 00 SHEET METAL FLASHING AND TRIM — 2.3", text: "Provide and install pipe flashing and boots at all plumbing and mechanical roof penetrations." },
+        { ref: "07 50 00 MEMBRANE ROOFING — 3.9", text: "The roofing Contractor shall flash all roof penetrations as part of the membrane system; penetrations flashed by others void the manufacturer's roofing warranty. (illustrative)" }
+      ],
+      answer: 1, ctype: "Double coverage + warranty trap",
+      why: "Both the sheet-metal section (clause 2) and the membrane roofer (clause 3) are told to flash the roof penetrations. Worse, clause 3 says that if anyone but the membrane roofer flashes them, the roof warranty voids. If the sheet-metal sub does the boots, you lose the warranty; if both carry it, you double-count. Assign penetration flashing to the membrane roofer and delete it from the sheet-metal scope. Clause 2 is the one that, left as written, voids the warranty. Clause 1 (vent height) is fine.",
+      cost: "Double-carried flashing is a few thousand; the real exposure is a voided roof warranty on the whole building — a catastrophic six-figure+ risk if a future leak isn't covered.",
+      standard: "“No dissimilar installer” roof-warranty clauses are real; penetration flashing must stay with the membrane roofer. A genuine double-coverage plus warranty trap."
+    },
+    {
+      id: 24, title: "Two regulators for one boiler", disc: "Plumb / Mech", diff: 2,
+      context: "Natural gas. The gas-piping section and the boiler section both provide a regulator.",
+      clauses: [
+        { ref: "22 11 00 FACILITY NATURAL-GAS PIPING — 2.3", text: "Provide line-pressure regulators at each appliance requiring reduced pressure; regulators and overpressure protection under this Section." },
+        { ref: "23 52 00 HEATING BOILERS — 2.5", text: "Boilers require 5–7\" w.c. gas; the gas train and its pressure regulator are furnished with the boiler under this Section. (illustrative)" },
+        { ref: "22 11 00 — 1.4", text: "The Utility provides gas service to the meter set at 2 psig; this Section distributes gas from the meter to equipment." }
+      ],
+      answer: 1, ctype: "Double coverage (equipment vs distribution)",
+      why: "Clause 1 puts a pressure regulator at each appliance under the gas-piping section; clause 2 says the boiler's regulator is furnished WITH the boiler under the mechanical section. At the boiler, the reducing regulator is specified twice. Carry both and you double-count; assume “the other guy has it” on both sides and the boiler regulator (and its overpressure protection) falls in a gap. Reconcile clause 2 against clause 1 so each regulator is carried exactly once. Clause 3 sets the 2 psig context.",
+      cost: "Gas regulators and overpressure protection are $300–$2,000 each; over multiple appliances and boilers, double-counting or gaps run $5k–$20k — plus a code issue if overpressure protection lands in the gap.",
+      standard: "Appliance gas regulators appearing in both the gas-piping section and the equipment gas-train scope is a real double-coverage trap; the estimator assigns each regulator once."
+    }
+  ];
+
+  /* ---------- deterministic daily selection ---------- */
+  const EPOCH = Date.UTC(2026, 6, 20); // launch: 2026-07-20 (puzzle #1)
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  function seededOrder(n, seed){
+    const arr=[...Array(n).keys()]; const rnd=mulberry32(seed);
+    for(let i=n-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+    return arr;
+  }
+  // Fixed seed => the daily rotation is identical for everyone, and each
+  // puzzle appears once per full cycle before any repeat. (Next Claude: if you
+  // add puzzles, the rotation reshuffles — that's fine, determinism holds.)
+  const ORDER = seededOrder(PUZZLES.length, 20260720);
+  function dayNumber(){
+    const now=new Date();
+    const t=Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.floor((t-EPOCH)/86400000);
+  }
+  function dailyPuzzleIndex(){ const d=dayNumber(); return ORDER[((d % PUZZLES.length)+PUZZLES.length)%PUZZLES.length]; }
+  function dailyNumber(){ return dayNumber()+1; }
+
+  /* ---------- persistent state ---------- */
+  const LS_KEY='ssc_state_v1';
+  function loadState(){
+    try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }catch(e){ return {}; }
+  }
+  function saveState(s){ try{ localStorage.setItem(LS_KEY, JSON.stringify(s)); }catch(e){} }
+  let state = loadState();
+  if(!state.days) state = { streak:0, best:0, lastSolvedNumber:null, days:{} };
+
+  /* ---------- runtime ---------- */
+  let mode='daily';
+  let current=null;      // {index, number|null}
+  let guesses=[];        // sequence of clause indices tapped (wrong then right)
+  let solved=false;
+  let startTs=0;
+  let sessionSolved=0;   // unlimited session counter
+
+  const $ = id => document.getElementById(id);
+
+  function setMode(m){
+    mode=m;
+    $('modeDaily').classList.toggle('active', m==='daily');
+    $('modeUnlimited').classList.toggle('active', m==='unlimited');
+    if(m==='daily') loadDaily(); else loadUnlimited();
+    renderStreak();
+  }
+
+  function renderStreak(){
+    const row=$('streakRow');
+    if(mode==='daily'){
+      row.innerHTML = '<span class="chip">🔥 Streak <strong>'+(state.streak||0)+'</strong></span>' +
+                      '<span class="chip">Best <strong>'+(state.best||0)+'</strong></span>';
+    } else {
+      row.innerHTML = '<span class="chip">Solved this session <strong>'+sessionSolved+'</strong></span>';
+    }
+  }
+
+  function loadDaily(){
+    const idx=dailyPuzzleIndex();
+    const num=dailyNumber();
+    current={index:idx, number:num};
+    const rec = state.days[num];
+    if(rec && rec.solved){
+      renderPuzzle(true, rec);   // already solved today — show result, no streak change
+    } else {
+      renderPuzzle(false, null);
+    }
+  }
+
+  function loadUnlimited(){
+    let idx;
+    do { idx=Math.floor(Math.random()*PUZZLES.length); } while(current && idx===current.index && PUZZLES.length>1);
+    current={index:idx, number:null};
+    renderPuzzle(false, null);
+  }
+
+  function dots(d){
+    let s='';
+    for(let i=0;i<3;i++){ s += (i<d) ? '●' : '<span class="off">●</span>'; }
+    return s;
+  }
+
+  function renderPuzzle(alreadySolved, rec){
+    const p=PUZZLES[current.index];
+    guesses = (alreadySolved && rec && rec.guesses) ? rec.guesses.slice() : [];
+    solved = !!alreadySolved;
+    startTs = Date.now();
+
+    const headNum = mode==='daily' ? ('Daily #'+current.number) : 'Practice';
+    let html='';
+    html += '<div class="puz-head">';
+    html += '<span class="puz-num">'+headNum+'</span>';
+    html += '<span class="tag disc">'+p.disc+'</span>';
+    html += '<span class="dots" title="difficulty">'+dots(p.diff)+'</span>';
+    html += '</div>';
+    html += '<div class="context">'+p.context+'</div>';
+    html += '<div class="illus-note">Illustrative excerpt · standard CSI format · composed for training</div>';
+    html += '<div class="prompt">Tap the clause an estimator must flag.</div>';
+    html += '<div class="clauses" id="clauses">';
+    // Shuffle the vertical order each render so "tap the first clause" is never a
+    // strategy. Each clause keeps a stable "Clause N" badge (N = authored index),
+    // so the reveal's "clause 1/2/3" references stay coherent regardless of order.
+    const order = p.clauses.map((_,i)=>i);
+    for(let i=order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]]; }
+    order.forEach(i=>{
+      const c=p.clauses[i];
+      html += '<button class="clause" data-i="'+i+'" onclick="pick('+i+')">'+
+              '<span class="ref"><span class="cn">Clause '+(i+1)+'</span> · '+c.ref+'</span>'+c.text+
+              '<span class="mark" id="mark'+i+'"></span></button>';
+    });
+    html += '</div>';
+    html += '<div class="reveal" id="reveal"></div>';
+    $('puzzleCard').innerHTML=html;
+
+    if(alreadySolved){
+      rec.guesses.forEach(g=>{ if(g!==p.answer) markClause(g,'wrong'); });
+      markClause(p.answer,'correct');
+      disableAll();
+      showReveal(true, rec.timeSec, true);
+    }
+    renderStreak();
+  }
+
+  function markClause(i, cls){
+    const btn=document.querySelector('.clause[data-i="'+i+'"]');
+    if(!btn) return;
+    btn.classList.add(cls);
+    const mk=$('mark'+i);
+    if(mk) mk.textContent = cls==='correct' ? '✓' : '✗';
+  }
+  function disableAll(){ document.querySelectorAll('.clause').forEach(b=>b.disabled=true); }
+
+  function pick(i){
+    if(solved) return;
+    const p=PUZZLES[current.index];
+    if(guesses.indexOf(i)!==-1) return;
+    guesses.push(i);
+    if(i===p.answer){
+      markClause(i,'correct');
+      disableAll();
+      solved=true;
+      const timeSec=Math.max(1, Math.round((Date.now()-startTs)/1000));
+      commitSolve(timeSec);
+      showReveal(true, timeSec, false);
+    } else {
+      markClause(i,'wrong');
+      const btn=document.querySelector('.clause[data-i="'+i+'"]');
+      if(btn) btn.disabled=true;
+    }
+  }
+
+  function commitSolve(timeSec){
+    if(mode==='daily'){
+      const num=current.number;
+      if(!(state.days[num] && state.days[num].solved)){
+        if(state.lastSolvedNumber === num-1) state.streak=(state.streak||0)+1;
+        else if(state.lastSolvedNumber === num) { /* already counted */ }
+        else state.streak=1;
+        state.lastSolvedNumber=num;
+        state.best=Math.max(state.best||0, state.streak);
+        state.days[num]={solved:true, guesses:guesses.slice(), timeSec:timeSec, firstTry:(guesses.length===1)};
+        saveState(state);
+      }
+    } else {
+      sessionSolved++;
+    }
+    renderStreak();
+  }
+
+  function guessRow(){
+    const p=PUZZLES[current.index];
+    let s='';
+    guesses.forEach(g=>{ s += (g===p.answer) ? '🟩' : '🟥'; });
+    return s;
+  }
+
+  function showReveal(isSolved, timeSec, replay){
+    const p=PUZZLES[current.index];
+    const r=$('reveal');
+    const firstTry = guesses.length===1;
+    let vtext;
+    if(firstTry) vtext='<span class="ok">First look. Clean catch.</span>';
+    else vtext='<span class="ok">Caught it</span> — in '+guesses.length+' looks.';
+
+    let html='';
+    html += '<div class="verdict">'+vtext+'</div>';
+    html += '<span class="ctype">'+p.ctype+'</span>';
+    html += '<div class="row"><span class="lbl">Why it’s the conflict</span><p>'+p.why+'</p></div>';
+    html += '<div class="row"><span class="lbl">What it costs the bid</span><p>'+p.cost+'</p></div>';
+    html += '<div class="row"><span class="lbl">The real-world convention</span><p>'+p.standard+'</p></div>';
+
+    html += '<div class="actions">';
+    if(mode==='daily'){
+      html += '<button class="btn primary" onclick="toggleShare()">Share result</button>';
+      html += '<button class="btn" onclick="setMode(\'unlimited\')">Keep practicing →</button>';
+    } else {
+      html += '<button class="btn primary" onclick="loadUnlimited()">Next puzzle →</button>';
+      html += '<button class="btn" onclick="setMode(\'daily\')">Back to today’s</button>';
+    }
+    html += '</div>';
+
+    if(mode==='daily'){
+      html += '<div class="share-box" id="shareBox">';
+      html += '<div class="share-pre" id="sharePre"></div>';
+      html += '<div class="actions"><button class="btn primary" onclick="doShare()">Copy</button><span class="copied" id="copiedMsg" style="display:none"></span></div>';
+      html += '</div>';
+    }
+
+    r.innerHTML=html;
+    r.classList.add('show');
+    if(mode==='daily') $('sharePre').textContent = buildShareText(timeSec);
+  }
+
+  function buildShareText(timeSec){
+    const num=current.number;
+    const rec=state.days[num] || {timeSec:timeSec, guesses:guesses};
+    const t = rec.timeSec || timeSec;
+    const line1='Spot the Spec Conflict #'+num;
+    const line2=guessRow()+'  '+t+'s';
+    const line3='🔥 streak '+(state.streak||0);
+    const line4='takeoff.buildtodogood.com/tools/spot-the-spec-conflict';
+    return line1+'\n'+line2+'\n'+line3+'\n'+line4;
+  }
+
+  function toggleShare(){ const b=$('shareBox'); if(b) b.classList.toggle('show'); }
+
+  function doShare(){
+    const txt = $('sharePre').textContent;
+    if(navigator.share){
+      navigator.share({text:txt}).catch(()=>copyText(txt));
+    } else {
+      copyText(txt);
+    }
+  }
+  function copyText(txt){
+    const done=()=>{ const m=$('copiedMsg'); if(m){ m.style.display='inline'; m.textContent='Copied ✓'; setTimeout(()=>{m.style.display='none';},2000);} };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));
+    } else { fallbackCopy(txt,done); }
+  }
+  function fallbackCopy(txt, done){
+    const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){} document.body.removeChild(ta);
+  }
+
+  // init
+  setMode('daily');
+  </script>
+</body>
+</html>

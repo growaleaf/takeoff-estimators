@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.svg">
+  <title>Cost Calibration — The Daily Guess-the-Construction-Cost Game | The Hive</title>
+  <meta name="description" content="A daily 'guess the construction cost' game for estimators and preconstruction pros. Real projects, real budgets — every answer cites its source and we refuse to fabricate a number. Daily + unlimited, streaks, and a shareable result card.">
+  <meta property="og:title" content="Cost Calibration — guess the construction cost, honestly sourced">
+  <meta property="og:description" content="How good is your gut? Guess the total cost of a real building, then see the sourced answer. A daily game for AEC / preconstruction estimators. Every figure is cited — no fabricated numbers.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/cookie-consent.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8335376690790226" crossorigin="anonymous"></script>
+  <meta property="og:image" content="https://takeoff.buildtodogood.com/favicon.svg">
+  <meta property="og:url" content="https://takeoff.buildtodogood.com/cost-calibration/">
+  <link rel="canonical" href="https://takeoff.buildtodogood.com/cost-calibration/">
+
+  <style>
+    /* ── Intro ─────────────────────────────────────── */
+    .cc-intro { margin: 0 0 1.5rem; }
+    .cc-intro p { color: var(--text-light); font-size: 1.05rem; line-height: 1.7; margin-bottom: 0.6rem; }
+    .cc-sourced-pill {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7;
+      font-size: 0.8rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+    :root[data-theme="dark"] .cc-sourced-pill { background: #16281a; color: #7fce88; border-color: #2f5233; }
+
+    /* ── Controls row ──────────────────────────────── */
+    .cc-controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1.25rem; }
+    .cc-tabs { display: flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .cc-tab {
+      padding: 0.5rem 1.15rem; background: var(--stat-bg); border: none; font-family: inherit;
+      font-size: 0.85rem; font-weight: 700; color: var(--text-light); cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .cc-tab + .cc-tab { border-left: 1px solid var(--border); }
+    .cc-tab.active { background: var(--amber); color: #3a2c00; }
+    .cc-tab:not(.active):hover { color: var(--text); }
+    .cc-select {
+      padding: 0.5rem 0.7rem; border: 1px solid var(--border); border-radius: 10px;
+      background: var(--input-bg); color: var(--text); font-family: inherit; font-size: 0.85rem; font-weight: 600;
+    }
+    .cc-select-wrap { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--text-light); }
+
+    /* ── Streak bar ────────────────────────────────── */
+    .cc-streak { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .cc-streak .chip {
+      background: var(--stat-bg); border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.4rem 0.85rem; font-size: 0.8rem; color: var(--text-light);
+    }
+    .cc-streak .chip strong { color: var(--amber-dark); font-weight: 800; font-size: 1.05rem; }
+
+    /* ── The round card ────────────────────────────── */
+    .cc-card {
+      border: 1px solid var(--border); border-radius: 16px; background: var(--card-bg);
+      padding: 1.5rem; margin-bottom: 1.5rem;
+    }
+    .cc-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1rem; }
+    .cc-cat {
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+      color: #3a2c00; background: var(--amber); border-radius: 6px; padding: 0.2rem 0.55rem;
+    }
+    .cc-pin { font-size: 0.82rem; color: var(--text-light); font-weight: 600; }
+    .cc-type { font-size: 1.35rem; font-weight: 800; line-height: 1.25; margin: 0 0 0.3rem; }
+    .cc-size {
+      display: inline-block; font-size: 0.95rem; font-weight: 800; color: var(--amber-dark);
+      background: var(--step-bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 0.25rem 0.7rem; margin-bottom: 0.8rem;
+    }
+    .cc-blurb { color: var(--text-light); font-size: 0.98rem; line-height: 1.65; margin-bottom: 1.25rem; }
+
+    /* ── Guess input ───────────────────────────────── */
+    .cc-guessmode { display: flex; gap: 0; margin-bottom: 0.9rem; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; width: fit-content; }
+    .cc-gm { padding: 0.35rem 0.9rem; background: var(--stat-bg); border: none; font-family: inherit; font-size: 0.78rem; font-weight: 700; color: var(--text-light); cursor: pointer; }
+    .cc-gm + .cc-gm { border-left: 1px solid var(--border); }
+    .cc-gm.active { background: var(--amber); color: #3a2c00; }
+
+    .cc-guess-label { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.45rem; }
+    .cc-input-row { display: flex; align-items: stretch; gap: 0.6rem; flex-wrap: wrap; }
+    .cc-input-field {
+      display: flex; align-items: center; flex: 1 1 220px; min-width: 0;
+      border: 2px solid var(--border); border-radius: 10px; background: var(--input-bg);
+      padding: 0 0.9rem; transition: border-color 0.2s;
+    }
+    .cc-input-field:focus-within { border-color: var(--amber); }
+    .cc-input-field .prefix { font-size: 1.15rem; font-weight: 800; color: var(--text-light); }
+    .cc-input-field input {
+      flex: 1; border: none; outline: none; background: transparent; color: var(--text);
+      font-family: inherit; font-size: 1.25rem; font-weight: 800; padding: 0.7rem 0.4rem; min-width: 0;
+    }
+    .cc-input-field .suffix { font-size: 0.85rem; font-weight: 600; color: var(--text-light); white-space: nowrap; }
+    .cc-parsed { font-size: 0.82rem; color: var(--text-light); margin: 0.4rem 0 0; min-height: 1.1em; }
+    .cc-parsed strong { color: var(--text); }
+
+    #ccSubmit {
+      padding: 0.75rem 1.6rem; background: var(--amber); color: #3a2c00; border: none; border-radius: 10px;
+      font-family: inherit; font-size: 1rem; font-weight: 800; cursor: pointer; transition: background 0.15s, transform 0.1s;
+    }
+    #ccSubmit:hover { background: var(--amber-dark); }
+    #ccSubmit:active { transform: scale(0.98); }
+    #ccSubmit:disabled { background: var(--border); color: var(--text-light); cursor: not-allowed; }
+
+    /* ── Result ────────────────────────────────────── */
+    .cc-result { display: none; }
+    .cc-verdict { text-align: center; padding: 0.5rem 0 1rem; }
+    .cc-verdict .emoji { font-size: 3rem; line-height: 1; display: block; margin-bottom: 0.35rem; }
+    .cc-verdict .band { font-size: 1.5rem; font-weight: 800; }
+    .cc-verdict .off { font-size: 0.95rem; color: var(--text-light); margin-top: 0.2rem; }
+    .cc-band-bullseye { color: #2e7d32; }
+    .cc-band-great { color: #2e7d32; }
+    .cc-band-close { color: #b8860b; }
+    .cc-band-off { color: #c0392b; }
+
+    .cc-numbers { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin: 0.5rem 0 1.25rem; }
+    .cc-num {
+      background: var(--stat-bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.9rem; text-align: center;
+    }
+    .cc-num .k { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); font-weight: 700; }
+    .cc-num .v { font-size: 1.25rem; font-weight: 800; margin-top: 0.15rem; }
+    .cc-num.actual .v { color: var(--amber-dark); }
+
+    /* ── Citation (the whole point) ────────────────── */
+    .cc-cite {
+      border: 1px solid #a5d6a7; background: #f1f8f2; border-radius: 12px; padding: 1rem 1.15rem; margin-bottom: 1rem;
+    }
+    :root[data-theme="dark"] .cc-cite { background: #13211557; border-color: #2f5233; }
+    .cc-cite .head { display: flex; align-items: center; gap: 0.45rem; font-weight: 800; font-size: 0.9rem; color: #2e7d32; margin-bottom: 0.5rem; }
+    :root[data-theme="dark"] .cc-cite .head { color: #7fce88; }
+    .cc-cite .basis {
+      display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--text-light); background: var(--card-bg); border: 1px solid var(--border); border-radius: 5px;
+      padding: 0.12rem 0.45rem; margin-bottom: 0.5rem;
+    }
+    .cc-cite .src { font-size: 0.92rem; line-height: 1.55; color: var(--text); }
+    .cc-cite .src a { color: var(--amber-dark); font-weight: 700; word-break: break-word; }
+    .cc-cite .note { font-size: 0.82rem; color: var(--text-light); margin-top: 0.45rem; line-height: 1.5; }
+
+    .cc-fact { font-size: 0.9rem; color: var(--text-light); line-height: 1.6; background: var(--step-bg); border-left: 3px solid var(--amber); border-radius: 0 8px 8px 0; padding: 0.6rem 0.85rem; margin-bottom: 1.25rem; }
+
+    /* ── Share ─────────────────────────────────────── */
+    .cc-share-box { border: 1px dashed var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; background: var(--step-bg); }
+    .cc-share-pre { font-family: ui-monospace, monospace; font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0 0 0.75rem; }
+    .cc-share-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .cc-btn-secondary {
+      padding: 0.55rem 1.1rem; border-radius: 9px; font-family: inherit; font-size: 0.88rem; font-weight: 700; cursor: pointer;
+      background: var(--card-bg); border: 1px solid var(--border); color: var(--text); transition: border-color 0.15s;
+    }
+    .cc-btn-secondary:hover { border-color: var(--amber); }
+    .cc-btn-primary {
+      padding: 0.55rem 1.3rem; border-radius: 9px; font-family: inherit; font-size: 0.88rem; font-weight: 800; cursor: pointer;
+      background: var(--amber); border: none; color: #3a2c00; transition: background 0.15s;
+    }
+    .cc-btn-primary:hover { background: var(--amber-dark); }
+
+    .cc-daily-note { text-align: center; font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
+
+    /* ── Methodology / cross-links ─────────────────── */
+    .cc-method { background: var(--stat-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.15rem 1.3rem; font-size: 0.9rem; color: var(--text-light); line-height: 1.65; margin: 2rem 0 1.25rem; }
+    .cc-method h3 { font-size: 1rem; color: var(--text); margin: 0 0 0.6rem; }
+    .cc-method strong { color: var(--text); }
+    .cc-method ul { margin: 0.5rem 0 0.5rem 1.1rem; padding: 0; }
+    .cc-method li { margin-bottom: 0.35rem; }
+    .cc-method summary { cursor: pointer; font-weight: 700; color: var(--amber-dark); }
+    .cc-method details { margin-top: 0.6rem; }
+
+    .cc-crosslink { border: 1px solid var(--border); border-radius: 12px; padding: 1.15rem 1.3rem; margin-bottom: 1.5rem; }
+    .cc-crosslink h3 { font-size: 1rem; margin: 0 0 0.5rem; }
+    .cc-crosslink p { font-size: 0.9rem; color: var(--text-light); line-height: 1.6; margin: 0 0 0.6rem; }
+    .cc-crosslink .links { display: flex; gap: 0.6rem 1rem; flex-wrap: wrap; }
+    .cc-crosslink .links a { font-weight: 700; color: var(--amber-dark); font-size: 0.9rem; }
+
+    @media (max-width: 560px) {
+      .cc-numbers { grid-template-columns: 1fr; }
+      .cc-type { font-size: 1.15rem; }
+      .cc-input-row { flex-direction: column; }
+      #ccSubmit { width: 100%; }
+      /* Harden the shared site chrome so this page never scrolls sideways on a
+         phone: the site nav and the cookie banner's buttons don't wrap by
+         default, which forces the layout wider than the viewport. Scoped to
+         this page only — does not change the sitewide stylesheet. */
+      nav .nav-links { flex-wrap: wrap; gap: 0.6rem 1.1rem; row-gap: 0.5rem; }
+      #hive-cookie .hive-cc-btns { flex-direction: column !important; align-items: stretch !important; }
+      /* Final guard: never scroll sideways on a phone (the real drivers above
+         are fixed, so this only clips sub-pixel rounding, not content). */
+      html, body { overflow-x: hidden; }
+    }
+  </style>
+</head>
+<body>
+  <nav style="max-width:900px;margin:0 auto;padding:14px 20px"><a href="/" style="text-decoration:none;font-weight:700">← Takeoff</a></nav>
+
+  <main class="page">
+    <h1>Cost Calibration</h1>
+
+    <div class="cc-intro">
+      <span class="cc-sourced-pill">&#10003; Every answer is sourced &mdash; we don't fabricate numbers</span>
+      <p>A daily game for estimators and preconstruction pros: you're shown a <strong>real building project</strong> &mdash; type, size, location, year. Guess what it cost. Then see how close your gut was, with the <strong>cited source</strong> for every figure.</p>
+      <p>Most "guess the price" games just make numbers up. This one won't. Where only a defensible range or an authorized budget exists, it says so. If a project's cost couldn't be honestly sourced, it isn't in here.</p>
+    </div>
+
+    <!-- Controls -->
+    <div class="cc-controls">
+      <div class="cc-tabs" role="tablist">
+        <button class="cc-tab active" id="tabDaily" role="tab" onclick="CC.setMode('daily')">Daily</button>
+        <button class="cc-tab" id="tabUnlimited" role="tab" onclick="CC.setMode('unlimited')">Unlimited</button>
+      </div>
+      <label class="cc-select-wrap" id="catWrap" style="display:none">
+        Category
+        <select class="cc-select" id="catSelect" onchange="CC.newRound()">
+          <option value="all">All types</option>
+          <option value="healthcare">Healthcare</option>
+          <option value="education">Education</option>
+          <option value="life-sciences">Life sciences</option>
+          <option value="federal">Federal</option>
+          <option value="commercial">Commercial / office</option>
+          <option value="cultural">Cultural / museum</option>
+          <option value="civic">Civic / transit</option>
+          <option value="sports">Sports</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- Streak -->
+    <div class="cc-streak" id="streakBar"></div>
+
+    <!-- The card -->
+    <div class="cc-card">
+      <!-- Round (guessing) view -->
+      <div id="roundView">
+        <div class="cc-meta">
+          <span class="cc-cat" id="rCat"></span>
+          <span class="cc-pin" id="rPin"></span>
+        </div>
+        <h2 class="cc-type" id="rType"></h2>
+        <span class="cc-size" id="rSize"></span>
+        <p class="cc-blurb" id="rBlurb"></p>
+
+        <div class="cc-guessmode" role="group" aria-label="Guess mode">
+          <button class="cc-gm active" id="gmTotal" onclick="CC.setGuessMode('total')">Total cost</button>
+          <button class="cc-gm" id="gmPsf" onclick="CC.setGuessMode('psf')">$ per SF</button>
+        </div>
+
+        <label class="cc-guess-label" id="guessLabel" for="guessInput">Your guess &mdash; total project cost</label>
+        <div class="cc-input-row">
+          <div class="cc-input-field">
+            <span class="prefix">$</span>
+            <input id="guessInput" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="0" aria-label="Your cost guess">
+            <span class="suffix" id="guessSuffix"></span>
+          </div>
+          <button id="ccSubmit" onclick="CC.submit()">Lock in guess</button>
+        </div>
+        <p class="cc-parsed" id="guessParsed"></p>
+      </div>
+
+      <!-- Result view -->
+      <div id="resultView" class="cc-result">
+        <div class="cc-verdict">
+          <span class="emoji" id="vEmoji"></span>
+          <div class="band" id="vBand"></div>
+          <div class="off" id="vOff"></div>
+        </div>
+
+        <div class="cc-numbers">
+          <div class="cc-num"><div class="k">Your guess</div><div class="v" id="vGuess"></div></div>
+          <div class="cc-num actual"><div class="k">Actual total project cost</div><div class="v" id="vActual"></div></div>
+        </div>
+        <div class="cc-numbers" style="margin-top:-0.75rem">
+          <div class="cc-num"><div class="k" id="vPsfLabel">Implied cost / SF</div><div class="v" id="vPsf"></div></div>
+          <div class="cc-num"><div class="k">Gross floor area</div><div class="v" id="vGsf"></div></div>
+        </div>
+
+        <div class="cc-cite">
+          <div class="head">&#10003; Sourced &mdash; not fabricated</div>
+          <div class="basis" id="cBasis"></div>
+          <div class="src" id="cSrc"></div>
+          <div class="note" id="cNote"></div>
+        </div>
+
+        <div class="cc-fact" id="vFact" style="display:none"></div>
+
+        <!-- Share -->
+        <div class="cc-share-box">
+          <pre class="cc-share-pre" id="sharePre"></pre>
+          <div class="cc-share-actions">
+            <button class="cc-btn-primary" id="copyBtn" onclick="CC.copyShare()">Copy result</button>
+            <button class="cc-btn-secondary" id="nextBtn" onclick="CC.nextRound()">Next project &rarr;</button>
+          </div>
+        </div>
+        <p class="cc-daily-note" id="dailyNote" style="display:none">That's today's project. Come back tomorrow for a new one &mdash; and keep the streak alive.</p>
+      </div>
+    </div>
+
+    <!-- Cross-link into the MEP surface -->
+    <div class="cc-crosslink">
+      <h3>Why a construction-estimating team built a cost game</h3>
+      <p>The Hive builds AI tools for MEP estimating and preconstruction &mdash; and the one rule underneath all of them is the same rule underneath this game: <strong>cite the source, refuse to fabricate.</strong> A number you can't stand behind is worse than no number.</p>
+      <div class="links">
+        </div>
+    </div>
+
+    <!-- Methodology -->
+    <div class="cc-method">
+      <h3>About the data</h3>
+      <p>Every project here is real and its cost comes from a retrievable public source &mdash; GSA prospectuses, government and university capital disclosures, the owner's own figures, or trade press (ENR, Construction Dive, Architectural Record). The source is shown on every answer screen and links out so you can check it.</p>
+      <ul>
+        <li><strong>Total project cost</strong> is the guessed number &mdash; the all-in figure as reported, not construction hard cost alone. Implied $/SF is that total &divide; gross floor area.</li>
+        <li><strong>"GSA-authorized"</strong> figures are the official Estimated Total Project Cost from a federal prospectus (a budget, not an as-built final) &mdash; labeled as such.</li>
+        <li><strong>Ranges</strong> (e.g., a stadium whose cost blurs into a wider campus) are shown as a range, not a single invented number.</li>
+      </ul>
+      <details>
+        <summary>What we left out &mdash; on purpose</summary>
+        <p style="margin-top:0.6rem">Several famous projects were <em>excluded</em> because a clean, honestly-attributable cost-and-area pair couldn't be found (a widely-quoted "square footage" that was really a site area or an LED-screen area; a cost that was really a whole-campus figure; a total that folded in a non-construction endowment). Dropping what we can't cite is the point &mdash; it's the same discipline behind the Hive's MEP tools.</p>
+      </details>
+    </div>
+
+    <!-- AdSense slot (sitewide model) -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-8335376690790226"
+         data-ad-slot="auto"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </main>
+
+  <footer>
+    Built by <a href="https://www.linkedin.com/in/build-ai-for-good">Dan Cohen</a> · <a href="/">More Takeoff games</a> &middot; <a href="/disclosures.html">Disclosures</a> &middot; <a href="#" onclick="showBanner(); return false;">Cookie settings</a>
+    <p>Built by The Hive &mdash; Wilmington, Delaware.</p>
+  </footer>
+
+  <script src="/hive.js"></script>
+  <script src="./projects.js"></script>
+  <script>
+  (function () {
+    "use strict";
+    var PROJECTS = (window.COST_PROJECTS || []).slice();
+    var LS = "costcal_v1";
+    var CATS = {
+      healthcare: "Healthcare", education: "Education", "life-sciences": "Life sciences",
+      federal: "Federal", commercial: "Commercial", cultural: "Cultural", civic: "Civic", sports: "Sports"
+    };
+    var BASIS = {
+      final: "Reported final project cost",
+      authorized: "GSA-authorized total project cost",
+      budget: "Reported project budget",
+      range: "Reported cost range"
+    };
+
+    var state = {
+      mode: "daily",
+      guessMode: "total",
+      current: null,       // current project
+      answered: false,
+      lastIdx: -1,
+      session: []          // unlimited session bands
+    };
+
+    // ---- storage ----
+    function load() {
+      try { return JSON.parse(localStorage.getItem(LS)) || {}; }
+      catch (e) { return {}; }
+    }
+    function save(o) { try { localStorage.setItem(LS, JSON.stringify(o)); } catch (e) {} }
+
+    // ---- helpers ----
+    function todayKey() {
+      var d = new Date();
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    }
+    function prettyDate() {
+      return new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    }
+    function hashStr(s) {
+      var h = 2166136261;
+      for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+      return (h >>> 0);
+    }
+    function dailyIndex(key) { return hashStr("cc-" + key) % PROJECTS.length; }
+
+    function fullMoney(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+    function shortMoney(n) {
+      if (n >= 1e9) return "$" + trimZeros((n / 1e9).toFixed(2)) + "B";
+      if (n >= 1e6) return "$" + trimZeros((n / 1e6).toFixed(1)) + "M";
+      return "$" + Math.round(n).toLocaleString("en-US");
+    }
+    function trimZeros(s) { return s.replace(/\.0+$/, "").replace(/(\.\d*?)0+$/, "$1"); }
+    function commafy(n) { return Number(n).toLocaleString("en-US"); }
+
+    // ---- pooling ----
+    function pool() {
+      if (state.mode === "unlimited") {
+        var c = document.getElementById("catSelect").value;
+        if (c && c !== "all") return PROJECTS.filter(function (p) { return p.category === c; });
+      }
+      return PROJECTS;
+    }
+
+    // ---- rendering the round ----
+    function renderRound(p) {
+      state.current = p;
+      state.answered = false;
+      document.getElementById("rCat").textContent = CATS[p.category] || p.category;
+      document.getElementById("rPin").textContent = p.city + ", " + p.state + "  ·  " + p.year;
+      document.getElementById("rType").textContent = p.type;
+      document.getElementById("rSize").textContent = commafy(p.gsf) + " gross sq ft";
+      document.getElementById("rBlurb").textContent = p.blurb;
+      document.getElementById("roundView").style.display = "";
+      document.getElementById("resultView").style.display = "none";
+      var inp = document.getElementById("guessInput");
+      inp.value = "";
+      document.getElementById("guessParsed").textContent = "";
+      document.getElementById("ccSubmit").disabled = false;
+      applyGuessMode();
+      inp.focus();
+    }
+
+    function applyGuessMode() {
+      var total = state.guessMode === "total";
+      document.getElementById("gmTotal").classList.toggle("active", total);
+      document.getElementById("gmPsf").classList.toggle("active", !total);
+      document.getElementById("guessLabel").innerHTML = total
+        ? "Your guess &mdash; total project cost"
+        : "Your guess &mdash; cost per gross square foot";
+      document.getElementById("guessSuffix").textContent = total ? "" : "/ SF";
+      var p = state.current;
+      var sfx = (!total && p) ? "  (× " + commafy(p.gsf) + " SF)" : "";
+      document.getElementById("guessInput").placeholder = total ? "1,300,000,000" : "800";
+      updateParsed();
+    }
+
+    function parseGuess() {
+      var raw = document.getElementById("guessInput").value.replace(/[^0-9.]/g, "");
+      if (raw === "" || isNaN(Number(raw))) return null;
+      return Number(raw);
+    }
+    function guessedTotal() {
+      var v = parseGuess();
+      if (v == null) return null;
+      if (state.guessMode === "psf") return v * (state.current ? state.current.gsf : 1);
+      return v;
+    }
+    function updateParsed() {
+      var el = document.getElementById("guessParsed");
+      var v = parseGuess();
+      if (v == null || !state.current) { el.textContent = ""; return; }
+      if (state.guessMode === "psf") {
+        el.innerHTML = "&rarr; " + fullMoney(v * state.current.gsf) + " total (<strong>" + shortMoney(v * state.current.gsf) + "</strong>)";
+      } else {
+        var psf = v / state.current.gsf;
+        el.innerHTML = "&rarr; <strong>" + shortMoney(v) + "</strong>  ·  " + Math.round(psf).toLocaleString("en-US") + " $/SF";
+      }
+    }
+
+    // live-format the input with commas (total mode only)
+    function onInput() {
+      var inp = document.getElementById("guessInput");
+      if (state.guessMode === "total") {
+        var digits = inp.value.replace(/[^0-9]/g, "");
+        inp.value = digits ? commafy(digits) : "";
+      }
+      updateParsed();
+    }
+
+    // ---- scoring ----
+    function scoreOf(p, gTotal) {
+      var pct;
+      if (p.isRange && p.costLow != null && p.costHigh != null) {
+        if (gTotal >= p.costLow && gTotal <= p.costHigh) pct = 0;
+        else if (gTotal < p.costLow) pct = (p.costLow - gTotal) / p.costLow;
+        else pct = (gTotal - p.costHigh) / p.costHigh;
+      } else {
+        pct = Math.abs(gTotal - p.cost) / p.cost;
+      }
+      var band;
+      if (pct <= 0.05) band = "bullseye";
+      else if (pct <= 0.10) band = "great";
+      else if (pct <= 0.25) band = "close";
+      else band = "off";
+      return { pct: pct, band: band };
+    }
+    var BAND_META = {
+      bullseye: { emoji: "🎯", label: "Bullseye", face: "🎯", cls: "cc-band-bullseye" },
+      great:    { emoji: "🟢", label: "Great",    face: "🟢", cls: "cc-band-great" },
+      close:    { emoji: "🟡", label: "Close",    face: "🟡", cls: "cc-band-close" },
+      off:      { emoji: "🔴", label: "Way off",  face: "🔴", cls: "cc-band-off" }
+    };
+
+    // ---- submit / reveal ----
+    function submit() {
+      if (state.answered || !state.current) return;
+      var gTotal = guessedTotal();
+      if (gTotal == null || gTotal <= 0) {
+        document.getElementById("guessParsed").innerHTML = "<span style='color:#c0392b'>Enter a number first.</span>";
+        return;
+      }
+      state.answered = true;
+      var p = state.current;
+      var res = scoreOf(p, gTotal);
+
+      // Update state BEFORE reveal so the share card reflects this round
+      // (daily streak increment / unlimited session push must precede buildShare).
+      if (state.mode === "daily") recordDaily(res);
+      else { state.session.push(res.band); renderStreak(); }
+
+      reveal(p, gTotal, res);
+    }
+
+    function reveal(p, gTotal, res) {
+      document.getElementById("roundView").style.display = "none";
+      var rv = document.getElementById("resultView");
+      rv.style.display = "block";
+      document.getElementById("ccSubmit").disabled = true;
+
+      var m = BAND_META[res.band];
+      document.getElementById("vEmoji").textContent = m.emoji;
+      var bandEl = document.getElementById("vBand");
+      bandEl.textContent = m.label + "!";
+      bandEl.className = "band " + m.cls;
+      document.getElementById("vOff").textContent = res.pct === 0
+        ? "Inside the reported range"
+        : "You were " + (res.pct * 100).toFixed(res.pct < 0.1 ? 1 : 0) + "% off";
+
+      document.getElementById("vGuess").textContent = shortMoney(gTotal);
+      document.getElementById("vActual").textContent = p.isRange
+        ? shortMoney(p.costLow) + "–" + shortMoney(p.costHigh)
+        : fullMoney(p.cost);
+      document.getElementById("vPsf").textContent = "$" + Math.round(p.cost / p.gsf).toLocaleString("en-US");
+      document.getElementById("vPsfLabel").textContent = p.isRange ? "Implied $/SF (low end)" : "Implied cost / SF";
+      document.getElementById("vGsf").textContent = commafy(p.gsf) + " SF";
+
+      document.getElementById("cBasis").textContent = BASIS[p.basis] || p.basis;
+      var linkHost = "";
+      try { linkHost = new URL(p.sourceUrl).hostname.replace(/^www\./, ""); } catch (e) { linkHost = "source"; }
+      document.getElementById("cSrc").innerHTML =
+        "<strong>" + esc(p.name) + "</strong> &mdash; " + esc(p.source) +
+        '. <a href="' + encodeURI(p.sourceUrl) + '" target="_blank" rel="noopener">view source (' + esc(linkHost) + ") ↗</a>";
+      document.getElementById("cNote").textContent = p.note || "";
+      document.getElementById("cNote").style.display = p.note ? "" : "none";
+
+      var fact = document.getElementById("vFact");
+      if (p.funFact) { fact.textContent = "💡 " + p.funFact; fact.style.display = ""; }
+      else fact.style.display = "none";
+
+      buildShare(p, res);
+
+      var isDaily = state.mode === "daily";
+      document.getElementById("nextBtn").style.display = isDaily ? "none" : "";
+      document.getElementById("dailyNote").style.display = isDaily ? "" : "none";
+      rv.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    // ---- share text (spoiler-free) ----
+    function buildShare(p, res) {
+      var m = BAND_META[res.band];
+      var url = "takeoff.buildtodogood.com/tools/cost-calibration";
+      var txt;
+      if (state.mode === "daily") {
+        var st = load();
+        var streak = (st.streak && st.streak.count) ? st.streak.count : 1;
+        var offTxt = res.pct === 0 ? "in range" : "within " + (res.pct * 100).toFixed(res.pct < 0.1 ? 1 : 0) + "%";
+        txt = "Cost Calibration — " + prettyDate() + " 🏗️\n" +
+              "Today's " + catWord(p) + ": " + offTxt + " " + m.face + "\n" +
+              "🔥 Streak " + streak + "\n" + url;
+      } else {
+        var bands = state.session.map(function (b) { return BAND_META[b].face; }).join("");
+        var hits = state.session.filter(function (b) { return b === "bullseye" || b === "great"; }).length;
+        var n = state.session.length;
+        txt = "Cost Calibration (Unlimited) 🏗️\n" +
+              n + (n === 1 ? " project: " : " projects: ") + bands + "\n" +
+              hits + " within 10%\n" + url;
+      }
+      document.getElementById("sharePre").textContent = txt;
+      state._share = txt;
+    }
+    function catWord(p) {
+      var w = { healthcare: "hospital", education: "school/university", "life-sciences": "research lab",
+        federal: "federal building", commercial: "office tower", cultural: "museum", civic: "civic project", sports: "stadium" };
+      return w[p.category] || "project";
+    }
+
+    function copyShare() {
+      var txt = state._share || "";
+      var btn = document.getElementById("copyBtn");
+      function done() { var o = btn.textContent; btn.textContent = "Copied!"; setTimeout(function () { btn.textContent = o; }, 1500); }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(txt).then(done, fallback);
+      } else fallback();
+      function fallback() {
+        var ta = document.createElement("textarea");
+        ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand("copy"); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    }
+
+    // ---- daily persistence + streak ----
+    function recordDaily(res) {
+      var st = load();
+      var key = todayKey();
+      st.daily = st.daily || {};
+      var already = st.daily[key];
+      st.daily[key] = { band: res.band, pct: res.pct };
+
+      if (!already) {
+        st.streak = st.streak || { count: 0, best: 0, last: null };
+        var y = new Date(); y.setDate(y.getDate() - 1);
+        var yKey = y.getFullYear() + "-" + String(y.getMonth() + 1).padStart(2, "0") + "-" + String(y.getDate()).padStart(2, "0");
+        if (st.streak.last === yKey) st.streak.count += 1;
+        else if (st.streak.last === key) { /* no-op */ }
+        else st.streak.count = 1;
+        st.streak.last = key;
+        if (st.streak.count > st.streak.best) st.streak.best = st.streak.count;
+        st.plays = (st.plays || 0) + 1;
+      }
+      save(st);
+      renderStreak();
+    }
+
+    function renderStreak() {
+      var st = load();
+      var bar = document.getElementById("streakBar");
+      if (state.mode === "daily") {
+        var s = st.streak || { count: 0, best: 0 };
+        var plays = st.plays || 0;
+        bar.innerHTML =
+          chip("🔥 Streak", s.count || 0) +
+          chip("Best", s.best || 0) +
+          chip("Played", plays);
+      } else {
+        var n = state.session.length;
+        var hits = state.session.filter(function (b) { return b === "bullseye" || b === "great"; }).length;
+        bar.innerHTML =
+          chip("This session", n) +
+          chip("Within 10%", hits) +
+          (n ? '<span class="chip">' + state.session.map(function (b) { return BAND_META[b].face; }).join(" ") + "</span>" : "");
+      }
+    }
+    function chip(k, v) { return '<span class="chip">' + k + " <strong>" + v + "</strong></span>"; }
+
+    // ---- flow ----
+    function newRound() {
+      if (state.mode === "daily") {
+        var key = todayKey();
+        var st = load();
+        var idx = dailyIndex(key);
+        renderRound(PROJECTS[idx]);
+        // if already answered today, replay the result immediately
+        if (st.daily && st.daily[key]) {
+          // reconstruct: we didn't store the guess; just show the round again but let them see the answer.
+          // To respect "one a day", reveal the answer with their recorded band and no re-score.
+          replayDaily(PROJECTS[idx], st.daily[key]);
+        }
+      } else {
+        pickUnlimited();
+      }
+      renderStreak();
+    }
+
+    function replayDaily(p, rec) {
+      state.current = p; state.answered = true;
+      var res = { pct: rec.pct, band: rec.band };
+      // show reveal without a fresh guess (guess unknown on replay -> hide guess value)
+      document.getElementById("roundView").style.display = "none";
+      var rv = document.getElementById("resultView"); rv.style.display = "block";
+      var m = BAND_META[res.band];
+      document.getElementById("vEmoji").textContent = m.emoji;
+      var bandEl = document.getElementById("vBand"); bandEl.textContent = m.label + "!"; bandEl.className = "band " + m.cls;
+      document.getElementById("vOff").textContent = res.pct === 0 ? "Inside the reported range" : "You were " + (res.pct * 100).toFixed(res.pct < 0.1 ? 1 : 0) + "% off";
+      document.getElementById("vGuess").textContent = "—";
+      document.getElementById("vActual").textContent = p.isRange ? shortMoney(p.costLow) + "–" + shortMoney(p.costHigh) : fullMoney(p.cost);
+      document.getElementById("vPsf").textContent = "$" + Math.round(p.cost / p.gsf).toLocaleString("en-US");
+      document.getElementById("vPsfLabel").textContent = p.isRange ? "Implied $/SF (low end)" : "Implied cost / SF";
+      document.getElementById("vGsf").textContent = commafy(p.gsf) + " SF";
+      document.getElementById("cBasis").textContent = BASIS[p.basis] || p.basis;
+      var linkHost = ""; try { linkHost = new URL(p.sourceUrl).hostname.replace(/^www\./, ""); } catch (e) { linkHost = "source"; }
+      document.getElementById("cSrc").innerHTML = "<strong>" + esc(p.name) + "</strong> &mdash; " + esc(p.source) + '. <a href="' + encodeURI(p.sourceUrl) + '" target="_blank" rel="noopener">view source (' + esc(linkHost) + ") ↗</a>";
+      document.getElementById("cNote").textContent = p.note || ""; document.getElementById("cNote").style.display = p.note ? "" : "none";
+      var fact = document.getElementById("vFact");
+      if (p.funFact) { fact.textContent = "💡 " + p.funFact; fact.style.display = ""; } else fact.style.display = "none";
+      buildShare(p, res);
+      document.getElementById("nextBtn").style.display = "none";
+      document.getElementById("dailyNote").style.display = "";
+      document.getElementById("dailyNote").textContent = "You've already played today's project. Come back tomorrow for a new one.";
+    }
+
+    function pickUnlimited() {
+      var arr = pool();
+      if (!arr.length) arr = PROJECTS;
+      var idx = Math.floor(Math.random() * arr.length);
+      if (arr.length > 1 && arr[idx].id === (state.current && state.current.id)) { idx = (idx + 1) % arr.length; }
+      renderRound(arr[idx]);
+    }
+
+    function nextRound() { if (state.mode === "unlimited") pickUnlimited(); }
+
+    function setMode(mode) {
+      state.mode = mode;
+      document.getElementById("tabDaily").classList.toggle("active", mode === "daily");
+      document.getElementById("tabUnlimited").classList.toggle("active", mode === "unlimited");
+      document.getElementById("catWrap").style.display = mode === "unlimited" ? "" : "none";
+      if (mode === "unlimited") state.session = [];
+      newRound();
+    }
+
+    function setGuessMode(gm) {
+      if (state.answered) return;
+      state.guessMode = gm;
+      // clear formatting when switching to psf (no comma grouping needed but harmless)
+      applyGuessMode();
+      document.getElementById("guessInput").focus();
+    }
+
+    // expose
+    window.CC = { setMode: setMode, setGuessMode: setGuessMode, submit: submit, nextRound: nextRound, newRound: newRound, copyShare: copyShare };
+
+    // init
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!PROJECTS.length) {
+        document.getElementById("roundView").innerHTML = "<p style='color:#c0392b'>Project data failed to load.</p>";
+        return;
+      }
+      var inp = document.getElementById("guessInput");
+      inp.addEventListener("input", onInput);
+      inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); submit(); } });
+      setMode("daily");
+    });
+  })();
+  </script>
+</body>
+</html>
