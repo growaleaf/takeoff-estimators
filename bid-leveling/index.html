@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bid-Leveling Gut-Check — Spot the Scope Gap, Pick the True Low Bid | The Hive</title>
+  <meta name="description" content="A 30-second drill for MEP estimators: two or three subcontractor bids with different exclusions. Find the scope gap and pick the TRUE low bid once you level. Daily + unlimited, streaks, shareable result. Bids illustrative; leveling built to survive a working estimator's read.">
+  <link rel="canonical" href="https://takeoff.buildtodogood.com/bid-leveling/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Bid-Leveling Gut-Check — pick the true low bid">
+  <meta property="og:description" content="Apparent low ≠ true low. Spot the scope gap across sub bids and level to the real number. Daily + unlimited.">
+  <meta property="og:url" content="https://takeoff.buildtodogood.com/bid-leveling/">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+
+  <style>
+    .game-wrap { max-width: 860px; margin: 0 auto; }
+    .lede { color: var(--text-light); max-width: 640px; margin: 0 auto 1.4rem; text-align: center; }
+    .lede strong { color: var(--text); }
+
+    .mode-toggle { display: flex; gap: .4rem; justify-content: center; margin: 0 auto 1rem; }
+    .mode-btn {
+      font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer;
+      padding: .5rem 1.1rem; border-radius: 999px; border: 1.5px solid var(--border);
+      background: var(--card-bg); color: var(--text-light); transition: all .15s;
+    }
+    .mode-btn.active { border-color: var(--amber); background: var(--selected-bg); color: var(--text); }
+
+    .streak-bar {
+      display: flex; gap: 1.2rem; justify-content: center; align-items: center;
+      flex-wrap: wrap; margin-bottom: 1.2rem; color: var(--text-light); font-size: .85rem;
+    }
+    .streak-bar b { color: var(--amber-dark); font-size: 1.15rem; }
+    #sessionStat { font-weight: 600; }
+
+    .board { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 16px; padding: 1.1rem 1.1rem 1.3rem; }
+    .scn-head { margin-bottom: 1rem; }
+    .scn-top { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-bottom: .5rem; }
+    .trade-chip {
+      display: inline-block; font-weight: 800; font-size: .75rem; letter-spacing: .04em;
+      text-transform: uppercase; color: #fff; background: var(--amber-dark);
+      padding: .28rem .6rem; border-radius: 6px;
+    }
+    .day-tag { font-size: .75rem; color: var(--text-light); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+    .scn-project { font-weight: 800; font-size: 1.12rem; margin: .1rem 0 .25rem; }
+    .scn-scope { color: var(--text-light); font-size: .92rem; margin: 0; }
+
+    .bids { display: grid; gap: .7rem; grid-template-columns: 1fr; margin: 1rem 0; }
+    @media (min-width: 620px) { .bids.multi { grid-template-columns: 1fr 1fr; } .bids.three { grid-template-columns: 1fr 1fr 1fr; } }
+    .bid { border: 1.5px solid var(--border); border-radius: 12px; padding: .7rem .8rem; background: var(--step-bg); }
+    .bid-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .5rem; border-bottom: 1px dashed var(--border); padding-bottom: .4rem; }
+    .bid-name { font-weight: 800; font-size: 1rem; }
+    .bid-base { font-weight: 800; font-size: 1.15rem; color: var(--text); font-variant-numeric: tabular-nums; }
+    .bid-lists { display: grid; gap: .5rem; grid-template-columns: 1fr; }
+    .bid-lists .col h4 { margin: 0 0 .25rem; font-size: .68rem; letter-spacing: .05em; text-transform: uppercase; color: var(--text-light); }
+    .bid-lists ul { margin: 0; padding: 0; list-style: none; }
+    .bid-lists li { font-size: .84rem; line-height: 1.35; padding-left: 1.1rem; position: relative; margin-bottom: .18rem; }
+    li.inc::before { content: "✓"; position: absolute; left: 0; color: #3a9d5d; font-weight: 800; }
+    li.exc::before { content: "✕"; position: absolute; left: 0; color: #c0603a; font-weight: 800; }
+    li.exc.none { color: var(--text-light); }
+    li.exc.none::before { content: "–"; color: var(--text-light); }
+
+    .prompt { text-align: center; margin: 1.1rem 0 .6rem; }
+    .prompt-label { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--amber-dark); margin-bottom: .3rem; }
+    .prompt-text { font-size: 1rem; color: var(--text); max-width: 620px; margin: 0 auto; }
+
+    .choices { display: flex; gap: .55rem; margin-top: .8rem; }
+    .choices.stack { flex-direction: column; }
+    .choices.row { flex-direction: row; justify-content: center; flex-wrap: wrap; }
+    .choice {
+      font: inherit; font-weight: 600; cursor: pointer; text-align: left;
+      padding: .8rem .9rem; border-radius: 11px; border: 1.5px solid var(--border);
+      background: var(--card-bg); color: var(--text); transition: all .13s; line-height: 1.35;
+    }
+    .choice:hover:not(:disabled) { border-color: var(--amber); background: var(--card-hover); }
+    .choice.bidpick { flex: 1 1 120px; max-width: 200px; text-align: center; font-weight: 800; font-size: 1.05rem; display: flex; flex-direction: column; gap: .15rem; }
+    .choice.bidpick span { font-weight: 600; font-size: .82rem; color: var(--text-light); font-variant-numeric: tabular-nums; }
+    .choice.locked { cursor: default; opacity: .96; }
+    .choice.correct { border-color: #3a9d5d; background: rgba(58,157,93,.14); color: var(--text); }
+    .choice.wrong { border-color: #c0603a; background: rgba(192,96,58,.14); }
+
+    .reveal { margin-top: 1.2rem; border-top: 2px solid var(--border); padding-top: 1rem; }
+    .verdict { font-weight: 800; font-size: 1.3rem; text-align: center; margin-bottom: .6rem; }
+    .verdict.win { color: #2f8f52; }
+    .verdict.miss { color: #c0603a; }
+    .impact { text-align: center; color: var(--text); max-width: 640px; margin: 0 auto 1rem; line-height: 1.5; }
+
+    .lev-table { width: 100%; border-collapse: collapse; font-size: .86rem; margin-bottom: 1rem; }
+    .lev-table th { text-align: left; font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-light); padding: .4rem .5rem; border-bottom: 1.5px solid var(--border); }
+    .lev-table td { padding: .55rem .5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .lev-table td.lev { font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .lev-table td.adders { font-size: .8rem; color: var(--text-light); }
+    .lev-table tr.true-low { background: rgba(58,157,93,.12); }
+    .lev-table tr.apparent { background: rgba(192,96,58,.08); }
+    .badge { display: inline-block; font-size: .6rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: .1rem .35rem; border-radius: 4px; background: #2f8f52; color: #fff; vertical-align: middle; }
+    .badge.apparent { background: #c0603a; }
+    .muted { color: var(--text-light); }
+
+    .why { background: var(--step-bg); border-radius: 12px; padding: .7rem .9rem; margin-bottom: .8rem; }
+    .why h4 { margin: 0 0 .3rem; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--amber-dark); }
+    .why p { margin: 0; line-height: 1.5; font-size: .92rem; }
+    .illus { font-size: .8rem; color: var(--text-light); text-align: center; margin: 0; }
+    .illus a { color: var(--amber-dark); }
+
+    .actions { display: flex; gap: .6rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+    .act-btn { font: inherit; font-weight: 800; cursor: pointer; padding: .7rem 1.3rem; border-radius: 999px; border: none; transition: transform .1s, filter .15s; }
+    .act-btn.primary { background: var(--amber); color: #2c2c2c; }
+    .act-btn.ghost { background: var(--card-bg); border: 1.5px solid var(--border); color: var(--text); }
+    .act-btn:hover { filter: brightness(1.05); }
+    .act-btn:active { transform: translateY(1px); }
+
+    .how { max-width: 700px; margin: 2rem auto 0; }
+    .how h2 { font-size: 1.05rem; }
+    .how ol { color: var(--text-light); line-height: 1.6; padding-left: 1.2rem; }
+    .related { max-width: 700px; margin: 1.6rem auto 0; }
+    .related h2 { font-size: 1.05rem; }
+    .related-grid { display: grid; gap: .6rem; grid-template-columns: 1fr; }
+    @media (min-width: 560px) { .related-grid { grid-template-columns: 1fr 1fr; } }
+    .related-grid a { display: block; padding: .8rem .9rem; border: 1.5px solid var(--card-border); border-radius: 12px; text-decoration: none; background: var(--card-bg); transition: border-color .15s; }
+    .related-grid a:hover { border-color: var(--amber); }
+    .related-grid strong { display: block; color: var(--text); font-size: .95rem; }
+    .related-grid em { color: var(--text-light); font-style: normal; font-size: .82rem; }
+
+    #toast {
+      position: fixed; left: 50%; bottom: 1.4rem; transform: translateX(-50%) translateY(1.5rem);
+      background: var(--text); color: var(--cream); padding: .7rem 1.1rem; border-radius: 10px;
+      font-weight: 700; font-size: .88rem; opacity: 0; pointer-events: none; transition: all .25s; z-index: 50;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">the hive <span>makes</span></a>
+    <ul class="nav-links">
+      <li><a href="/tools/">tools</a></li>
+      <li><a href="/writing/">writing</a></li>
+      <li><a href="/about.html">about</a></li>
+      <li><a href="/builder-circle.html">advisory</a></li>
+      <li><a href="/support.html">support</a></li>
+      <li class="controls">
+        <button class="toggle-btn" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">&#9790;</button>
+      </li>
+    </ul>
+  </nav>
+
+  <main class="page game-wrap">
+    <h1 style="text-align:center;margin-bottom:.4rem;">Bid-Leveling Gut-Check</h1>
+    <p class="lede">Two or three subcontractor bids for the same scope, each with its own exclusions. The lowest number is rarely the lowest <strong>cost</strong>. Spot the scope gap, level the bids, and pick the <strong>true</strong> low — in about 30 seconds.</p>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="modeDaily" type="button">Daily</button>
+      <button class="mode-btn" id="modeUnlimited" type="button">Unlimited</button>
+    </div>
+
+    <div class="streak-bar">
+      <span>Streak <b id="streakVal">0</b></span>
+      <span>Best <b id="bestVal">0</b></span>
+      <span id="sessionStat" style="display:none;"></span>
+    </div>
+
+    <section class="board">
+      <div class="scn-head">
+        <div class="scn-top">
+          <span class="trade-chip" id="scnTrade">Trade</span>
+          <span class="day-tag" id="dayTag">Daily</span>
+        </div>
+        <p class="scn-project" id="scnProject">Project</p>
+        <p class="scn-scope" id="scnScope">Scope of work</p>
+      </div>
+
+      <div class="bids multi" id="bids"></div>
+
+      <div class="prompt">
+        <span class="prompt-label" id="promptLabel">Step 1 of 2</span>
+        <div class="prompt-text" id="promptText"></div>
+      </div>
+      <div class="choices stack" id="choices"></div>
+
+      <div class="reveal" id="reveal" style="display:none;"></div>
+
+      <div class="actions" id="actions" style="display:none;">
+        <button class="act-btn primary" id="shareBtn" type="button">Share result</button>
+        <button class="act-btn ghost" id="nextBtn" type="button">Next →</button>
+      </div>
+    </section>
+
+    <section class="how">
+      <h2>How to read it like an estimator</h2>
+      <ol>
+        <li><strong>Base price is a headline, not a total.</strong> An exclusion pushes scope onto someone else — but the project still buys it.</li>
+        <li><strong>Only asymmetric, contractor-owned gaps move the ranking.</strong> If every bid excludes the same thing, or the owner furnishes it (OFCI), it's a wash.</li>
+        <li><strong>Size the gap before you flip.</strong> A $2.5k access-panel exclusion doesn't beat a $55k base spread; a $165k controls exclusion does.</li>
+        <li><strong>Level to a common scope, then compare.</strong> Lowest <em>leveled</em> total wins — that's the true low.</li>
+      </ol>
+    </section>
+
+    <section class="related">
+      <h2>Do it for real</h2>
+      <div class="related-grid">
+        <a href="/tools/sub-bid-scope-gap/"><strong>Sub-Bid Scope-Gap Detector →</strong><em>Paste 2–5 real bids — cited includes, excludes, gaps, and overlaps, verified twice.</em></a>
+        <a href="/tools/spec-book-mep-scanner/"><strong>Spec Book MEP-Scope Scanner →</strong><em>Find the MEP scope, owner overrides, and contradictions buried in the spec book.</em></a>
+        <a href="/writing/ai-mep-estimating-three-capabilities/"><strong>AI for MEP estimating →</strong><em>The three capabilities that actually save hours on a bid — and why anti-fabrication matters.</em></a>
+        <a href="/tools/"><strong>All tools →</strong><em>The rest of the estimating + preconstruction toolkit.</em></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a href="/">Home</a> · <a href="/about.html">About</a> · <a href="/advisor.html">Advisor</a> · <a href="/builder-circle.html">AI Advisory</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="/disclosures.html">Disclosures</a> &middot; <a href="#" onclick="showBanner(); return false;">Cookie settings</a>
+    <p>Built by The Hive — Wilmington, Delaware. Bid figures are illustrative; the leveling logic reflects standard MEP scope practice.</p>
+  </footer>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+  <canvas id="shareCanvas" width="1200" height="630" style="display:none;"></canvas>
+
+  <script src="/hive.js"></script>
+  <script src="/cookie-consent.js"></script>
+  <script src="game.js"></script>
+  <script src="engine.js"></script>
+</body>
+</html>
