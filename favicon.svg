@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="6" fill="#fff8f0"/>
+  <!-- Hexagon -->
+  <polygon points="16,3 27,9.5 27,22.5 16,29 5,22.5 5,9.5" fill="#d4a843" stroke="#b8922e" stroke-width="1"/>
+  <!-- "h" monogram -->
+  <text x="16" y="22" font-family="Georgia,serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#fff8f0">h</text>
+</svg>
